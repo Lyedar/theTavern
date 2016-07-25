@@ -15,6 +15,13 @@ function toggleLoginAction(){
 	}
 }
 
+function setUserNameAction(userName){
+	return{
+		type: "SET_USERNAME",
+		userName
+	}
+}
+
 function setEmailAction(email){
 	return{
 		type: 'SET_EMAIL',
@@ -25,6 +32,13 @@ function setEmailAction(email){
 function setPasswordAction(password){
 	return{
 		type: 'SET_PASSWORD',
+		password
+	}
+}
+
+function setConfirmPasswordAction(password){
+	return{
+		type: 'SET_CONFIRM',
 		password
 	}
 }
@@ -80,23 +94,36 @@ function deleteFromListAction(list, item){
 
 
 //SEARCH ACTIONS
-function setSearchAction(search) {
+function setSearchAction(element, value) {
 	return {
 		type: 'SET_SEARCH',
-		search
+		element,
+		value
 	}
+}
+
+//ERROR MESSAGE ACTIONS	
+
+function setErrorMessageAction(message){
+	return {
+		type: 'SET_ERROR',
+		message
+		}
 }
 
 module.exports = {
 	toggleLoginAction,
 	setUserAction,
+	setUserNameAction,
 	setEmailAction,
 	setPasswordAction,
+	setConfirmPasswordAction,
 	updateProfileAction,
 	setProfileAction,
 	changeAvailabiltyAction,
 	changeEditAction,
 	addToListAction,
 	deleteFromListAction,
-	setSearchAction
+	setSearchAction,
+	setErrorMessageAction
 }

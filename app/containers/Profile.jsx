@@ -20,6 +20,8 @@ function mapStateToProps(state){
   return { 
     currentProfile : state.get("currentProfile"),
     userName : state.getIn(["currentProfile", "userName"]),
+    dungeonMaster: state.getIn(["currentProfile", "dungeonMaster"]),
+    player:  state.getIn(["currentProfile", "player"]),
     edit : state.get("edit")
   }
 }
@@ -62,6 +64,7 @@ class ProfileView extends React.Component {
   }
 
   render() {
+    console.log("this is sparta!", this.props.currentProfile)
     return (
       <div className = 'container-fluid marginTop centerText profileCD'>
         <h1 className = 'profileName'>{this.props.userName}'s Profile</h1>
@@ -80,11 +83,11 @@ class ProfileView extends React.Component {
                 <li><ProfileCheckboxField label='Host' field='host'/></li>
                 <li><ProfileField label='Drink' field='alcohol'/></li>
                 <li><ProfileField label='Skill' field='skillLevel'/></li>
-                <li><ProfileCheckboxField label='Dungeon Master' field='dungeonMaster'/></li>
-                <li><ProfileCheckboxField label='Player' field='player'/></li>
+                {this.props.dungeonMaster || this.props.edit ? <li><ProfileCheckboxField label='Dungeon Master' field='dungeonMaster'/></li> : ''}
+                {this.props.player || this.props.edit ? <li><ProfileCheckboxField label='Player' field='player'/></li> : ''}
                 <li><ProfileListField label='Games'field='games'/></li>
                 <li><ProfileListField label='Friends' field='friends'/></li>
-                <li><ProfileListField label='Blocked Users' field='blockedUser' /></li>
+                {this.props.edit ? <li><ProfileListField label='Blocked Users' field='blockedUser' /></li> : ''}
               </ul>
             </h4>
             <CommitButton /><br/><br/>

@@ -13,7 +13,7 @@ const {Header, Brand} = Navbar
 function mapStateToProps(state, ownProps){
   return {
     edit : state.get('edit'),
-    user : state.get('currentUser'),
+    user : state.get('currentUser').toJS(),
     email: state.get('email'),
     password: state.get('password'),
     loggedIn: state.get('loggedIn')
@@ -37,9 +37,9 @@ function mapDispatchToProps(dispatch, ownProps){
 class NavigationView extends Component {
 
 
-  componentWillMount() {
-    requestApi('/api/v1/getuser')().then(user=>this.props.setUser(user))
-  }
+  // componentWillMount() {
+  //   requestApi('/api/v1/getuser')().then(user=>this.props.setUser(user))
+  // }
 
   
 
@@ -47,12 +47,12 @@ class NavigationView extends Component {
     if(this.props.user){
       return(
         <NavDropdown eventKey={2} title= {this.props.user.userName} id = "user-drop-down">
-          <MenuItem eventKey={2.1} href={/profile/ + this.props.user.userName}>Profile</MenuItem>
-          <MenuItem eventKey={2.3} href="/logout">Log Out</MenuItem>  
+          <MenuItem eventKey={2.1}><Link to={/profile/ + this.props.user.userName}>Profile</Link></MenuItem>
+          <MenuItem eventKey={2.3}><Link to="/logout">Log Out</Link></MenuItem>  
         </NavDropdown> 
       )     
     } else {
-      return <NavItem eventKey={2} href="/login">Login</NavItem>  
+      return <NavItem eventKey={2}><Link to="/login">Login</Link></NavItem>  
     }
   }
 
@@ -97,7 +97,7 @@ class NavigationView extends Component {
       return(
         <div>
         {this.dropDown()}
-        <NavItem eventKey={3} href="/search">Search</NavItem>
+        <NavItem eventKey={3}><Link to='/search'>Search</Link></NavItem>
         </div>
         )
     }else{
@@ -110,6 +110,7 @@ class NavigationView extends Component {
     }
 
   render() {
+    console.log('this is logged in state', this.props.loggedIn)
     return (
       <Navbar className={"navbar-fixed-top"} fluid = 'true'>
         <Header>
