@@ -7,7 +7,9 @@ var initialState = Immutable.fromJS({
 	loggedIn: false,
 	currentUser : {},
 	currentProfile: {},
-	edit: false
+	edit: false,
+	email: '',
+	password: ''
 })
 
 module.exports =  createStore(tavernReducer, initialState)

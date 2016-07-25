@@ -4,7 +4,6 @@ import {Button} from 'react-bootstrap'
 import {connect} from 'react-redux'
 
 function mapStateToProps(state, ownProps){
-  console.log('map state', state.get('currentProfile'))
   return {
     edit : state.get('edit'),
     value: state.getIn(['currentProfile', ownProps.field]),

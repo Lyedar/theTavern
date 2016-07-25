@@ -58,8 +58,7 @@ class ProfileView extends React.Component {
  }
 
   componentWillMount(){
-    var self = this
-    self.whosProfile()
+    this.whosProfile()
   }
 
   render() {

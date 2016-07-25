@@ -7,9 +7,14 @@ function tavernReducer(previousState, action){
 	console.log('DOING A REDUCE', action)
 	switch(action.type){
 		case 'TOGGLE_LOGIN':
+			console.log("IT'S HAPPENING!!!!")
 			return previousState.set('loggedIn', !previousState.get('loggedIn'))
 		case 'SET_USER':
-			return previousState.set('currentUser', action.user);
+			return previousState.set('currentUser', action.user)
+		case 'SET_EMAIL':
+			return previousState.set('email', action.email);
+		case 'SET_PASSWORD':
+			return previousState.set('password', action.password)
 		case 'CHANGE_EDITABLE':
 			return previousState.set('edit', !previousState.get('edit'));
 		case 'UPDATE_PROFILE':

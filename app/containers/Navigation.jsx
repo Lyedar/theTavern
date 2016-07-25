@@ -5,18 +5,40 @@ import classNames from 'classnames/bind';
 import styles from 'css/components/navigation';
 import {Navbar, Nav, NavItem, NavDropdown, MenuItem, Form, FormGroup, ControlLabel, FormControl, Button} from 'react-bootstrap'
 import requestApi from '../utilities/requests'
+import {setUserAction, toggleLoginAction, setEmailAction, setPasswordAction} from '../redux/actions'
 const cx = classNames.bind(styles);
 const {Header, Brand} = Navbar
 
-class Navigation extends Component {
 
- constructor(props){
-    super(props);
-    this.state = {}
-  }  
+function mapStateToProps(state, ownProps){
+  return {
+    edit : state.get('edit'),
+    user : state.get('currentUser'),
+    email: state.get('email'),
+    password: state.get('password'),
+    loggedIn: state.get('loggedIn')
+  }
+
+}
+
+function mapDispatchToProps(dispatch, ownProps){
+  return {
+    setUser : (user) => dispatch(setUserAction(user)),
+    toggleLogin: () => dispatch(toggleLoginAction()), 
+    setEmail: (value) => dispatch(setEmailAction(value)), 
+    setPassword: (value) => dispatch(setPasswordAction(value))
+  }
+
+}
+
+
+
+
+class NavigationView extends Component {
+
 
   componentWillMount() {
-    requestApi('/api/v1/getuser')().then(user=>this.setState(user))
+    requestApi('/api/v1/getuser')().then(user=>this.props.setUser(user))
   }
 
   
@@ -24,8 +46,8 @@ class Navigation extends Component {
   dropDown(){
     if(this.props.user){
       return(
-        <NavDropdown eventKey={2} title= {this.props.user} id = "user-drop-down">
-          <MenuItem eventKey={2.1} href={/profile/ + this.props.user}>Profile</MenuItem>
+        <NavDropdown eventKey={2} title= {this.props.user.userName} id = "user-drop-down">
+          <MenuItem eventKey={2.1} href={/profile/ + this.props.user.userName}>Profile</MenuItem>
           <MenuItem eventKey={2.3} href="/logout">Log Out</MenuItem>  
         </NavDropdown> 
       )     
@@ -35,41 +57,43 @@ class Navigation extends Component {
   }
 
   loginDisplay() {
+    var self = this
     return (
       <Form inline className="marginTop black alignRight">
         <FormGroup controlId = 'email' >
             <ControlLabel>Email</ControlLabel>
             {' '}
-            <FormControl type = 'email' placeholder = 'Email' onChange= {e=> this.setState({email:e.target.value})}/>
+            <FormControl type = 'email' placeholder = 'Email' onChange= {(e)=> self.props.setEmail(e.target.value)}/>
         </FormGroup>
         {' '}
         <FormGroup>
             <ControlLabel>Password</ControlLabel>
             {' '}
-            <FormControl type = 'password' placeholder = 'Password' onChange = {e=> this.setState({password:e.target.value})} />
+            <FormControl type = 'password' placeholder = 'Password' onChange = {(e)=> self.props.setPassword(e.target.value)} />
         </FormGroup>
         {' '}
-        <Button  onClick={this.loginReq.bind(this)}>Login</Button>
+        <Button  onClick={::self.loginReq}>Login</Button>
       </Form>
     )
   }
 
   loginReq() {
-    var self = this
-    requestApi('/api/v1/login', 'POST')({'email': this.state.email, 'password': this.state.password})
+    requestApi('/api/v1/login', 'POST')({email: this.props.email , password: this.props.password})
       .then(loginSuccess=>
         {
-          if(loginSuccess.success === 'true'){
-            self.props.toggleLogin()
-            browserHistory.push('/profile/' + loginSuccess.user)
-          } else if (loginSuccess.success === 'false') {
+          if(loginSuccess.success){
+            this.props.toggleLogin()
+            console.log("TOGGLELOGIN", this.props.loggedIn)
+            this.props.setUser(loginSuccess.user)
+            browserHistory.push('/profile/' + loginSuccess.user.userName)
+          } else {
             alert('Login failed. You should feel bad.')
           }
         })
   }
 
   isLoggedIn(){
-    if(this.props.user){
+    if(this.props.loggedIn){
       return(
         <div>
         {this.dropDown()}
@@ -79,7 +103,7 @@ class Navigation extends Component {
     }else{
       return (
         <div>
-        {this.loginDisplay()}
+        {::this.loginDisplay()}
         </div>
         )
       }
@@ -103,4 +127,4 @@ class Navigation extends Component {
 
 
 
-export default Navigation;
+module.exports = connect(mapStateToProps , mapDispatchToProps)(NavigationView)

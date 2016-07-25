@@ -9,8 +9,23 @@ function setUserAction(user){
 }
 
 function toggleLoginAction(){
+	console.log("ACTION BABY!")
 	return{
 		type: "TOGGLE_LOGIN"
+	}
+}
+
+function setEmailAction(email){
+	return{
+		type: 'SET_EMAIL',
+		email
+	}
+}
+
+function setPasswordAction(password){
+	return{
+		type: 'SET_PASSWORD',
+		password
 	}
 }
 
@@ -75,6 +90,8 @@ function setSearchAction(search) {
 module.exports = {
 	toggleLoginAction,
 	setUserAction,
+	setEmailAction,
+	setPasswordAction,
 	updateProfileAction,
 	setProfileAction,
 	changeAvailabiltyAction,

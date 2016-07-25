@@ -4,7 +4,6 @@ import {connect} from 'react-redux'
 
 
 function mapStateToProps(state){
-	console.log('map state', state.get('edit'))
 	return {
 		edit : state.get('edit')
 	}

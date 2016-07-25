@@ -50,9 +50,9 @@
   app.get('/api/v1/login/:result',function(req, res){
     console.log("Login attempt Res: ", req.user)
     if(req.params.result=== 'true'){
-    res.json({success: req.params.result, user: req.user.local.userName})
+    res.json({success: true, user: req.user.local})
     }else{
-      res.json({success: req.params.result})
+      res.json({success: false})
     }
   } )//write function her 
 
@@ -66,7 +66,7 @@
   });
 
   app.get('/api/v1/getuser', function(req,res){
-    res.json(req.user || {local: null})
+    res.json(req.user)
   })
 
   app.get('/api/v1/getallusers', function(req,res){

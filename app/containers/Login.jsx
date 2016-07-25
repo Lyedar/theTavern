@@ -5,16 +5,19 @@ import 'whatwg-fetch';
 import { Link } from 'react-router';
 const cx = classNames.bind(styles);
 import {browserHistory} from 'react-router';
+import requestApi from '../utilities/requests'
 import {Button, form, FormGroup, ControlLabel, FormControl, Col, Row} from 'react-bootstrap';
-import {setUserAction, setLoginAction} from '../redux/actions'
+import {setUserAction, setLoginAction, setEmailAction, setPasswordAction} from '../redux/actions'
 import {connect} from 'react-redux'
 
 
 function mapStateToProps(state, ownProps){
-  console.log('map state', state.get('currentProfile'))
   return {
     edit : state.get('edit'),
-    user : state.get('currentUser')
+    user : state.get('currentUser'),
+    email: state.get('email'),
+    password: state.get('password'),
+    loggedIn: state.get('loggedIn')
   }
 
 }
@@ -22,41 +25,60 @@ function mapStateToProps(state, ownProps){
 function mapDispatchToProps(dispatch, ownProps){
   return {
     setUser : (user) => dispatch(setUserAction(user)),
-    setLogin: () => dispatch(setLoginAction())  
+    setLogin: () => dispatch(setLoginAction()), 
+    setEmail: (value) => dispatch(setEmailAction(value)), 
+    setPassword: (value) => dispatch(setPasswordAction(value))
   }
 
 }
 
 export default class Login extends React.Component {
 
-	pullUser(){
-		console.log(this.props)
-		var self = this
-		fetch('/api/v1/login', {
-			credentials : 'same-origin',
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				email : self.state.email,
-				password : self.state.password
+
+
+	pulluser(){
+		requestApi('/api/v1/login', POST)({email:this.props.email, password:this.props.password})
+			.then(function(response){
+				if(response.success){
+					this.props.setLogin
+					this.props.setEmail('')
+					this.props.setPassword('')
+					this.props.setUser(response.user)
+					browserHistory.push('/')
+				}else{
+					return(<div>You suck at typing</div>)
+				}
 			})
-		})
-		.then(function(response) {
-			return response.json()
-		}).then(function(json) {			
-			self.setState(json)
-		}).catch(function(ex) {
-			console.log('parsing failed', ex)
-		}).then(function(){
-			if(self.state.success){
-				self.props.toggleLogin()
-				browserHistory.push('/')
-			}
-		})
 	}
+
+	// pullUser(){
+	// 	console.log(this.props)
+	// 	var self = this
+	// 	fetch('/api/v1/login', {
+	// 		credentials : 'same-origin',
+	// 		method: 'POST',
+	// 		headers: {
+	// 			'Accept': 'application/json',
+	// 			'Content-Type': 'application/json'
+	// 		},
+	// 		body: JSON.stringify({
+	// 			email : self.state.email,
+	// 			password : self.state.password
+	// 		})
+	// 	})
+	// 	.then(function(response) {
+	// 		return response.json()
+	// 	}).then(function(json) {			
+	// 		self.setState(json)
+	// 	}).catch(function(ex) {
+	// 		console.log('parsing failed', ex)
+	// 	}).then(function(){
+	// 		if(self.state.success){
+	// 			self.props.toggleLogin()
+	// 			browserHistory.push('/')
+	// 		}
+	// 	})
+	// }
 
 	render(){
 		var self = this 
@@ -67,7 +89,7 @@ export default class Login extends React.Component {
 					<Row>
 					<Col sm={3}>
 					<ControlLabel>Email</ControlLabel>
-					<FormControl type="email" placeHolder = "Enter Email" onChange={(e)=>this.setState({email:e.target.value})}/><br />
+					<FormControl type="email" placeHolder = "Enter Email" onChange={(e)=>this.props.setEmail(e.target.value)}/><br />
 					</Col>
 					</Row>
 				</FormGroup>
@@ -75,7 +97,7 @@ export default class Login extends React.Component {
 					<Row>
 					<Col sm={3}>
 					<ControlLabel>Password</ControlLabel>
-					<FormControl type="password" placeHolder= "Enter Password" onChange={(e)=>this.setState({password:e.target.value})} /><br />
+					<FormControl type="password" placeHolder= "Enter Password" onChange={(e)=>this.props.setPassword(e.target.value)} /><br />
 					</Col>
 					</Row>
 				</FormGroup>
