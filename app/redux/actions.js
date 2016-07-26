@@ -102,6 +102,13 @@ function setSearchAction(element, value) {
 	}
 }
 
+function setResultsAction(results){
+	return{
+		type: 'SET_RESULTS',
+		results
+	}
+}
+
 //ERROR MESSAGE ACTIONS	
 
 function setErrorMessageAction(message){

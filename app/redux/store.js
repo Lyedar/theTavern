@@ -14,6 +14,7 @@ var initialState = Immutable.fromJS({
 		player: true,
 		list: 'game'
 	},
+	results: {},
 	userName: '',
 	email: '',
 	password: '',

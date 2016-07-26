@@ -2,8 +2,9 @@ import React from 'react';
 import 'whatwg-fetch';
 import { Link } from 'react-router';
 import {browserHistory} from 'react-router';
-import {setSearchAction} from '../redux/actions'
-import {connect} from 'react-redux'
+import {setSearchAction, setResultsAction} from '../redux/actions';
+import {connect} from 'react-redux';
+import requestApi from '../utilities/requests';
 
 function mapStateToProps(state, ownProps){
 	console.log('stttate', state.toJS())
@@ -11,20 +12,28 @@ function mapStateToProps(state, ownProps){
 	    edit : state.get('edit'),
 	    value: state.getIn(['currentProfile', ownProps.field]),
 	    user: state.getIn(['currentUser', 'userName']),
-	    search: state.get('search').set('currentUser',state.getIn(['currentUser', 'userName']))
+	    search: state.get('search').set('currentUser',state.getIn(['currentUser', 'userName'])),
+	    results: state.get('results')
 	}
 }
 
 function mapDispatchToProps(dispatch, ownProps){
   return {
-    setSearch : (element, value) => dispatch(setSearchAction(element, value))
+    setSearch : (element, value) => dispatch(setSearchAction(element, value)),
+    setResults: (results) => dispatch(setResultsAction(results))
   }
 }
 
 export default class SearchView extends React.Component {
 
+
+
 	searchTag() {
-		console.log('this is the test object', this.props.search.toJS())
+		requestApi('/api/v1/search', 'PUT')(this.props.search) 
+			.then((results) => {
+				this.props.setResults(results)
+				console.log(this.props.results)
+			})
 	}
 
 	render () {

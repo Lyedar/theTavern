@@ -35,6 +35,8 @@ function tavernReducer(previousState, action){
 			return previousState.setIn(['currentProfile', action.list], previousState.getIn(['currentProfile', action.list]).filter((i) => i !== action.item))
 		case 'SET_SEARCH':
 			return previousState.setIn(['search', action.element], action.value)
+		case 'SET_RESULTS':
+			return previousState.set('results', action.results)
 		case 'SET_ERROR':
 			return previousState.set('errorMessage', action.message)
 	}

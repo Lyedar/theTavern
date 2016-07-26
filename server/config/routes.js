@@ -8,6 +8,7 @@
  var App = require(path.resolve(__dirname, '../../', 'public', 'assets', 'server.js'))['default'];
  var User=require("../models/userModel")
  var profileController = require('../controllers/profileController')
+ var searchController = require('../controllers/searchController')
 
  module.exports = function(app, passport) {
   
@@ -103,6 +104,9 @@
   app.put('/api/v1/updateprofile', profileController.updateOne);
   app.post('/api/v1/createprofile', profileController.createOne);
   app.get('/api/v1/getprofile/:slug', profileController.retrieveOne);
+
+  //search stuff
+  app.put('/api/v1/search', searchController.search);
 
   app.get('*', function (req, res, next) {
     App(req, res);

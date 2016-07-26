@@ -15,13 +15,11 @@ function retrieveOne(req, res) {
 	Profile.findOne({userName:req.params.slug}, function(err, profile) {
 		if(err) return console.log(err);
 		res.writeHead(200, {"Content-Type": "text/json"})
-		console.log('Profile, ', profile)
 		res.end(JSON.stringify(profile))
 	})
 }
 
 function updateOne(req, res) {
-	console.log("Put Request Received for ", req.body)
 	Profile.findOneAndUpdate({userName:req.body.userName}, req.body, function(err, profile) {
 		if(err) return console.log(err);
 		res.writeHead(200, {"Content-Type": "text/json"})
