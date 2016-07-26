@@ -1,6 +1,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+var times = {Morning: {type: Boolean, default: true}, Lunch: {type: Boolean, default: true}, Afternoon: {type: Boolean, default: true}, Night: {type: Boolean, default: true}, GraveYard: {type: Boolean, default: true}};
+
 var profileSchema = new Schema({
  userName: {type: String, required: true},
  name: String,
@@ -16,7 +18,15 @@ var profileSchema = new Schema({
  friends: [],
  skillLevel: String,
  party: [],
- availability: {},
+ availability: {
+ 	Monday:  times,
+ 	Tuesday: times,
+ 	Wednesday: times,
+ 	Thursday: times,
+ 	Friday:  times,
+ 	Saturday: times,
+ 	Sunday:  times
+ },	
  dm: Boolean,
  player: {type: Boolean, default: true}
 })

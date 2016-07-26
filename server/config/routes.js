@@ -38,8 +38,12 @@
       }));
 
   app.get('/api/v1/signup/:result',function(req, res){
-    res.json({success: req.params.result})
-  } )//write function her 
+    if(req.params.result=== 'true'){
+      res.json({success: true, user: req.user.local})
+    }else{
+      res.json({success: false})
+    }
+  })
 
   app.post('/api/v1/login', passport.authenticate('local-login', {
         successRedirect : '/api/v1/login/true', // redirect to the secure profile section
@@ -50,11 +54,11 @@
   app.get('/api/v1/login/:result',function(req, res){
     console.log("Login attempt Res: ", req.user)
     if(req.params.result=== 'true'){
-    res.json({success: true, user: req.user.local})
+      res.json({success: true, user: req.user.local})
     }else{
       res.json({success: false})
     }
-  } )//write function her 
+  })//write function her 
 
   app.get('/api/v1/user',function(req,res){
     res.json({user : _.get(req, 'user.username','none')});

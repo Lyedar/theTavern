@@ -72,7 +72,7 @@ class NavigationView extends Component {
             <FormControl type = 'password' placeholder = 'Password' onChange = {(e)=> self.props.setPassword(e.target.value)} />
         </FormGroup>
         {' '}
-        <Button  onClick={::self.loginReq}>Login</Button>
+        <Button  onClick={::self.loginReq} >Login</Button>
       </Form>
     )
   }

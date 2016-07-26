@@ -29,11 +29,12 @@ function mapStateToProps(state){
 function mapDispatchToProps(dispatch){
   return {
     setProfile : (profile) => dispatch(setProfileAction(profile)),
-    toggleLoggin : () => dispatch(toggleLogginAction()),
+    toggleLoggin : () => dispatch(toggleLoginAction()),
     setEmail : (email) => dispatch(setEmailAction(email)),
     setPassword: (password) => dispatch(setPasswordAction(password)),
     setConfirm: (password) => dispatch(setConfirmPasswordAction(password)),
     setUserName: (userName) => dispatch(setUserNameAction(userName)),
+    setUser: (user) => dispatch(setUserAction(user)),
     setError: (message) => dispatch(setErrorMessageAction(message))
   }
 }
@@ -45,12 +46,24 @@ function mapDispatchToProps(dispatch){
  		if(this.props.confirmPassword !== this.props.password){
  			this.props.setError("Password's don't match")
  		}else{
- 		console.log('attempting signup')	
- 		requestApi('api/v1/signup', 'POST')({userName: this.props.userName, email: this.props.email, password: this.props.password})
- 		.then(()=>{ 
- 			requestApi('api/v1/createprofile', 'POST')({userName: this.props.userName, email: this.props.email})
- 			})
- 			.then(browserHistory.push('/profile/'+ this.props.userName))
+	 		console.log('attempting signup')	
+	 		requestApi('api/v1/signup', 'POST')({userName: this.props.userName, email: this.props.email, password: this.props.password})
+		 		.then((response) => {
+		 			this.props.setUser(response.user)
+		 			requestApi('api/v1/createprofile', 'POST')({userName: this.props.userName, email: this.props.email})
+		 			console.log('CREATING PROFILE')
+		 		})
+			 			.then(() => {
+			 				requestApi('/api/v1/login', 'POST')({email:this.props.email, password:this.props.password})
+			 				console.log('LOGGING IN')
+			 			})
+				 			.then(() =>{
+				 				console.log('ALL DONE SWITCHING PAGES'),
+				 				this.props.setEmail(''),
+				 				this.props.setPassword(''),
+				 				this.props.toggleLoggin(),
+				 				browserHistory.push('/profile/' + this.props.userName)
+			 				})
  		}
  	}
 

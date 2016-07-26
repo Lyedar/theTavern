@@ -64,7 +64,6 @@ class ProfileView extends React.Component {
   }
 
   render() {
-    console.log("this is sparta!", this.props.currentProfile)
     return (
       <div className = 'container-fluid marginTop centerText profileCD'>
         <h1 className = 'profileName'>{this.props.userName}'s Profile</h1>
@@ -80,7 +79,7 @@ class ProfileView extends React.Component {
                 <li><ProfileField label='Location' field='location'/></li>
                 <li><ProfileField label='Phone' field='phone'/></li>
                 <li><ProfileField label='Email' field='email'/></li>
-                <li><ProfileCheckboxField label='Host' field='host'/></li>
+                {this.props.host || this.props.edit ? <li><ProfileCheckboxField label='Host' field='host'/></li> : ''}
                 <li><ProfileField label='Drink' field='alcohol'/></li>
                 <li><ProfileField label='Skill' field='skillLevel'/></li>
                 {this.props.dungeonMaster || this.props.edit ? <li><ProfileCheckboxField label='Dungeon Master' field='dungeonMaster'/></li> : ''}
