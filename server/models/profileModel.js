@@ -27,7 +27,7 @@ var profileSchema = new Schema({
  	Saturday: times,
  	Sunday:  times
  },	
- dm: Boolean,
+ dm: {type: Boolean, default: false},
  player: {type: Boolean, default: true}
 })
 
