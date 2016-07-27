@@ -26,14 +26,18 @@ function mapDispatchToProps(dispatch, ownProps){
 
 export default class SearchView extends React.Component {
 
-
-
 	searchTag() {
+		console.log('Searching',this.props.search)
 		requestApi('/api/v1/search', 'PUT')(this.props.search) 
-			.then((results) => {
+		.then((results) => {
+				console.log('Results', results)
 				this.props.setResults(results)
-				console.log(this.props.results)
-			})
+				console.log(this.props.results.name)
+		})
+	}
+
+	searchResults() {
+		
 	}
 
 	render () {
@@ -50,6 +54,9 @@ export default class SearchView extends React.Component {
 	            <input type='checkbox' checked={dm} id = 'dm' onChange={(e) => this.props.setSearch('dm', !dm)}  />Dungeon Master
 	            <input type='checkbox' checked={player} id = 'player' onChange={(e) => this.props.setSearch('player', !player)}  />Player		
 				<button onClick={::this.searchTag}>Search</button>
+			<div>
+				{this.searchResults}
+			</div>
 			</div>
 		)
 	}

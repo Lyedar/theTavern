@@ -1,14 +1,21 @@
+var Immutable = require('immutable')
 var Profile = require('../models/profileModel')
 
 function search(req, res) {
-	Profile.find({player:req.body.player} || {dm: req.body.dm}, function(err, profiles) {
+	console.log('Searching')
+	const query = {
+		player: req.body.player
+	}
+
+	Profile.find(query).exec(function(err, profiles) {
 		if(err) return console.log(err);
+		//console.log('found', profiles)
 		getUser(req.body.currentUser).then(
 			(user)=>{
 				var results = filterSearch(user, profiles, req.body.list);
 				res.writeHead(200, {"Content-Type": "text/json"});
 				console.log('attempting to send search results Results: ', results)
-				res.end(JSON.stringy(results));		
+				res.end(JSON.stringify(results));		
 			}
 		);
 	})
@@ -23,15 +30,29 @@ function getUser(user, callback) {
 	})
 }
 
-function filterSearch(user, list, key) {
+function filterSearch(user, profiles, key) {
+	const profiles = profiles
+					.map(profile => profile._doc ? profile._doc : profile)
+					.filter((profile) =>  user.email !== profile.email )
 	switch(key) {
 		case 'times':
-			return {name: user.userName, key: 'times', list: list}
+			return profiles
+			.map(profile => Object.assign({}, profile, {availabilityScore: compareTimes(user.availability, profile.availability)}))
+			.filter((profile)=> profile.availabilityScore)
 		case 'game':
-			return {name: user.userName, key: 'game', list: list}
+			var userGames = new Immutable.Set(user.games)
+			return profiles.filter(userGames.intersect(profile.games).size)
 		case 'location':
-			return {name: user.userName, key: 'location', list: list}
+			return profiles.filter((profile)=> user.location.toLowerCase() === profile.location.toLowerCase())		
 	}
+}
+
+function compareTimes(userTime, profileTime){
+	const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+	const times = ['Morning', 'Lunch', 'Afternoon', 'Night', 'GraveYard']
+	const returnVal = days.map(day=> times.filter(time => userTime[day][time] && profileTime[day][time]).length)
+						  .reduce((acc, next) => acc + next)
+	return returnVal
 }	
 
 module.exports = {search}
