@@ -11,6 +11,9 @@ function tavernReducer(previousState, action){
 			return previousState.set('loggedIn', !previousState.get('loggedIn'))
 		case 'SET_USER':
 			return previousState.set('currentUser', Immutable.fromJS(action.user))
+		case 'ADD_USER':
+			console.log('ADDING USER', action)
+			return previousState.setIn(['users', action.user.userName], Immutable.fromJS(action.user));
 		case 'SET_USERNAME':
 			return previousState.set('userName', action.userName);
 		case 'SET_EMAIL':
@@ -41,7 +44,6 @@ function tavernReducer(previousState, action){
 			return previousState.set('errorMessage', action.message)
 	}
 	return previousState
-
 }
 
 module.exports = tavernReducer

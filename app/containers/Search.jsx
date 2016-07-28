@@ -2,9 +2,11 @@ import React from 'react';
 import 'whatwg-fetch';
 import { Link } from 'react-router';
 import {browserHistory} from 'react-router';
-import {setSearchAction, setResultsAction} from '../redux/actions';
+import {setSearchAction, setResultsAction, addUserAction} from '../redux/actions';
 import {connect} from 'react-redux';
 import requestApi from '../utilities/requests';
+import _ from 'lodash';
+import Calendar from './Calendar'
 
 function mapStateToProps(state, ownProps){
 	console.log('stttate', state.toJS())
@@ -20,24 +22,35 @@ function mapStateToProps(state, ownProps){
 function mapDispatchToProps(dispatch, ownProps){
   return {
     setSearch : (element, value) => dispatch(setSearchAction(element, value)),
-    setResults: (results) => dispatch(setResultsAction(results))
+    setResults: results => dispatch(setResultsAction(results)),
+    addUser: profile => dispatch(addUserAction(profile))
   }
 }
 
 export default class SearchView extends React.Component {
 
 	searchTag() {
-		console.log('Searching',this.props.search)
-		requestApi('/api/v1/search', 'PUT')(this.props.search) 
+		var self = this
+		console.log('Searching',self.props.search)
+		requestApi('/api/v1/search', 'PUT')(self.props.search) 
 		.then((results) => {
-				console.log('Results', results)
-				this.props.setResults(results)
-				console.log(this.props.results.name)
+				self.props.setResults(results)
+				results.map((profile)=>this.props.addUser(profile))
 		})
 	}
 
 	searchResults() {
-		
+		if(this.props.results) {
+			return this.props.results.map((profile) => {
+				return (<div>
+							{profile.userName}<br />
+							{profile.location}<br />
+							{profile.games}<br />
+							{_.get(profile, 'availabilityScore')}
+							<Calendar user={profile.userName} />
+						</div>)
+			})
+		}
 	}
 
 	render () {
@@ -55,7 +68,7 @@ export default class SearchView extends React.Component {
 	            <input type='checkbox' checked={player} id = 'player' onChange={(e) => this.props.setSearch('player', !player)}  />Player		
 				<button onClick={::this.searchTag}>Search</button>
 			<div>
-				{this.searchResults}
+				{this.searchResults()}
 			</div>
 			</div>
 		)

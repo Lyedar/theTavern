@@ -8,6 +8,13 @@ function setUserAction(user){
 	}
 }
 
+function addUserAction(user) {
+	return{
+		type: "ADD_USER",
+		user
+	}	
+}
+
 function toggleLoginAction(){
 	console.log("ACTION BABY!")
 	return{
@@ -120,6 +127,7 @@ function setErrorMessageAction(message){
 
 module.exports = {
 	toggleLoginAction,
+	addUserAction,
 	setUserAction,
 	setUserNameAction,
 	setEmailAction,
@@ -132,5 +140,6 @@ module.exports = {
 	addToListAction,
 	deleteFromListAction,
 	setSearchAction,
+	setResultsAction,
 	setErrorMessageAction
 }

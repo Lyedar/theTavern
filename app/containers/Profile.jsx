@@ -10,7 +10,7 @@ import requestApi from '../utilities/requests'
 import Calendar from './Calendar'
 import ToggleEditButton from '../components/ToggleEditButton'
 import {ProfileField, ProfileListField, ProfileCheckboxField} from '../components/profileFields'
-import {setProfileAction, changeEditAction} from '../redux/actions'
+import {setProfileAction, changeEditAction, addUserAction} from '../redux/actions'
 import editButtonBehavior from '../components/ToggleEditBehavior'
 import getProfileBehavior from '../components/getProfileBehavior'
 
@@ -20,6 +20,7 @@ function mapStateToProps(state){
   return { 
     currentProfile : state.get("currentProfile"),
     userName : state.getIn(["currentProfile", "userName"]),
+    users: state.get('users'),
     dungeonMaster: state.getIn(["currentProfile", "dungeonMaster"]),
     player:  state.getIn(["currentProfile", "player"]),
     edit : state.get("edit")
@@ -29,7 +30,8 @@ function mapStateToProps(state){
 function mapDispatchToProps(dispatch){
   return {
     setProfile : (profile) => dispatch(setProfileAction(profile)),
-    changeEdit : () => dispatch(changeEditAction()) 
+    changeEdit : () => dispatch(changeEditAction()),
+    addUser : (user) => dispatch(addUserAction(user))
   }
 }
 
@@ -56,6 +58,7 @@ class ProfileView extends React.Component {
   requestApi('/api/v1/getprofile/' + this.props.params.slug)()
     .then((profile)=>{
       this.props.setProfile(profile)
+      this.props.addUser(profile)
     })
  }
 
@@ -64,6 +67,7 @@ class ProfileView extends React.Component {
   }
 
   render() {
+    console.log('USERS EQUALS: ', this.props.users.toJS())
     return (
       <div className = 'container-fluid marginTop centerText profileCD'>
         <h1 className = 'profileName'>{this.props.userName}'s Profile</h1>
@@ -100,7 +104,7 @@ class ProfileView extends React.Component {
         </Row>
         <Row>
           <Col md = {12}>
-            <Calendar/>
+            <Calendar user={this.props.userName} />
           </Col>
         </Row>
       </div>

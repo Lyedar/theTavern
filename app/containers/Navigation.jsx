@@ -5,7 +5,7 @@ import classNames from 'classnames/bind';
 import styles from 'css/components/navigation';
 import {Navbar, Nav, NavItem, NavDropdown, MenuItem, Form, FormGroup, ControlLabel, FormControl, Button} from 'react-bootstrap'
 import requestApi from '../utilities/requests'
-import {setUserAction, toggleLoginAction, setEmailAction, setPasswordAction} from '../redux/actions'
+import {setUserAction, toggleLoginAction, setEmailAction, setPasswordAction, addUserAction} from '../redux/actions'
 const cx = classNames.bind(styles);
 const {Header, Brand} = Navbar
 
@@ -26,7 +26,8 @@ function mapDispatchToProps(dispatch, ownProps){
     setUser : (user) => dispatch(setUserAction(user)),
     toggleLogin: () => dispatch(toggleLoginAction()), 
     setEmail: (value) => dispatch(setEmailAction(value)), 
-    setPassword: (value) => dispatch(setPasswordAction(value))
+    setPassword: (value) => dispatch(setPasswordAction(value)),
+    addUser: (user) => dispatch(addUserAction(user))
   }
 
 }
@@ -85,6 +86,8 @@ class NavigationView extends Component {
             this.props.toggleLogin()
             console.log("TOGGLELOGIN", this.props.loggedIn)
             this.props.setUser(loginSuccess.user)
+            console.log('THE PROPS', this.props)
+            this.props.addUser(loginSuccess.user)
             browserHistory.push('/profile/' + loginSuccess.user.userName)
           } else {
             alert('Login failed. You should feel bad.')

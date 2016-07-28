@@ -5,17 +5,23 @@ import {Form, FormGroup, FormControl, ControlLabel, Col, Row, Button, HelpBlock}
 import {changeAvailabiltyAction} from '../redux/actions'
 import {connect} from 'react-redux'
 
-function mapStateToProps(state){
+function mapStateToProps(state, ownprops){
+	var loggedInUser = state.getIn(['currentUser','userName'])
+	var user = ownprops.user || loggedInUser
+	console.log("CALENDAR", user)
 	return{
-		availability: state.getIn(["currentProfile", "availability"]),
+		availability: state.getIn(["users", user, "availability"]),
+		userAvailability:  state.getIn(["users", loggedInUser , "availability"]),
+		user, 
+		loggedInUser,
 		edit: state.get('edit')
-		}
+	}
 }
 
 function mapDispatchToProps(dispatch){
 	return{
 		setAvailability: (day, time, available) => dispatch(changeAvailabiltyAction(day, time, available))
-		}
+	}
 }
 
 export default class CalendarView extends React.Component {
@@ -36,7 +42,7 @@ export default class CalendarView extends React.Component {
 		}else{
 			if(this.props.availability.getIn([day,time])){
 				return(
-					<span className = 'green'>Available</span>
+					<span className = 'green' >Available</span>
 					)
 			}else{
 				return(
@@ -44,6 +50,14 @@ export default class CalendarView extends React.Component {
 				)
 			}
 		}	
+	}
+
+	match(day, time){
+		const {user, loggedInUser, availability, userAvailability} = this.props
+		if (user !== loggedInUser){
+			return availability.getIn([day,time]) && userAvailability.getIn([day, time])
+		} 
+		return false
 	}
 
 	times() {
@@ -66,6 +80,7 @@ export default class CalendarView extends React.Component {
 	}
 
 	render() {
+		console.log('CALENDAR PROPS', this.props)
 		if(this.props.availability){
 			return(
 				<div className = 'profileCal'>
