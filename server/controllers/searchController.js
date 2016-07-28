@@ -9,9 +9,10 @@ function search(req, res) {
 
 	Profile.find(query).exec(function(err, profiles) {
 		if(err) return console.log(err);
-		//console.log('found', profiles)
-		getUser(req.body.currentUser).then(
+		console.log('found', profiles)
+		getUser(req.body.currentUser || 'Fred').then(
 			(user)=>{
+				console.log('getting user', user, req.body.list)
 				var results = filterSearch(user, profiles, req.body.list);
 				res.writeHead(200, {"Content-Type": "text/json"});
 				console.log('attempting to send search results Results: ', results)
@@ -31,9 +32,19 @@ function getUser(user, callback) {
 }
 
 function filterSearch(user, profiles, key) {
-	const profiles = profiles
-					.map(profile => profile._doc ? profile._doc : profile)
+	console.log('filter search', profiles)
+
+	const spy = (x) => {
+		console.log('spying', x)
+		return x
+	}
+	profiles = profiles
+					.map(spy)
+					.map(profile => profile.toObject())
+					.map(spy)
 					.filter((profile) =>  user.email !== profile.email )
+
+	console.log('PROFILES',profiles)				
 	switch(key) {
 		case 'times':
 			return profiles
@@ -41,7 +52,7 @@ function filterSearch(user, profiles, key) {
 			.filter((profile)=> profile.availabilityScore)
 		case 'game':
 			var userGames = new Immutable.Set(user.games)
-			return profiles.filter(userGames.intersect(profile.games).size)
+			return profiles.filter(profile => userGames.intersect(profile.games).size)
 		case 'location':
 			return profiles.filter((profile)=> user.location.toLowerCase() === profile.location.toLowerCase())		
 	}
