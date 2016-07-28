@@ -9,6 +9,9 @@ function tavernReducer(previousState, action){
 		case 'TOGGLE_LOGIN':
 			console.log("IT'S HAPPENING!!!!")
 			return previousState.set('loggedIn', !previousState.get('loggedIn'))
+		case 'LOGIN_TRUE':
+			console.log('WE ARE TRUE')
+			return previousState.set('loggedIn', true)
 		case 'SET_USER':
 			return previousState.set('currentUser', Immutable.fromJS(action.user))
 		case 'ADD_USER':

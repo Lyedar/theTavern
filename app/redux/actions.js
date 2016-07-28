@@ -22,6 +22,14 @@ function toggleLoginAction(){
 	}
 }
 
+function loginTrueAction(){
+	console.log('HI BOYS')
+	return{
+		type: "LOGIN_TRUE"
+	}
+}
+
+
 function setUserNameAction(userName){
 	return{
 		type: "SET_USERNAME",
@@ -127,6 +135,7 @@ function setErrorMessageAction(message){
 
 module.exports = {
 	toggleLoginAction,
+	loginTrueAction,
 	addUserAction,
 	setUserAction,
 	setUserNameAction,

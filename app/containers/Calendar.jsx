@@ -42,7 +42,7 @@ export default class CalendarView extends React.Component {
 		}else{
 			if(this.props.availability.getIn([day,time])){
 				return(
-					<span className = 'green' >Available</span>
+					<span className = 'green' style={{background: this.match(day, time) ? 'hotpink' : undefined}}>Available</span>
 					)
 			}else{
 				return(
@@ -54,7 +54,7 @@ export default class CalendarView extends React.Component {
 
 	match(day, time){
 		const {user, loggedInUser, availability, userAvailability} = this.props
-		if (user !== loggedInUser){
+		if (user !== loggedInUser && loggedInUser){
 			return availability.getIn([day,time]) && userAvailability.getIn([day, time])
 		} 
 		return false

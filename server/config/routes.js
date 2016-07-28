@@ -71,7 +71,9 @@
   });
 
   app.get('/api/v1/getuser', function(req,res){
-    res.json(req.user)
+    console.log('GET USER REQ:', req)
+    console.log('GET USER RES:', res)
+    res.json(req.user.local)
   })
 
   app.get('/api/v1/getallusers', function(req,res){
