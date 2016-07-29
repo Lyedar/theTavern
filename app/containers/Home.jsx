@@ -3,7 +3,7 @@ import 'whatwg-fetch';
 import { Link, IndexLink } from 'react-router';
 import {browserHistory} from 'react-router';
 import {Form, FormGroup, FormControl, ControlLabel, Col, Row, Button, HelpBlock} from 'react-bootstrap'
-import {setUserAction, setUserNameAction, toggleLoginAction, setEmailAction, setPasswordAction, setConfirmPasswordAction, setErrorMessageAction} from '../redux/actions'
+import {setUserAction, setUserNameAction, toggleLoginAction, setEmailAction, setPasswordAction, setConfirmPasswordAction, setErrorMessageAction, changeEditAction} from '../redux/actions'
 import requestApi from '../utilities/requests'
 import GroupForm from '../components/GroupForm'
 import {connect} from 'react-redux'
@@ -16,7 +16,6 @@ import {connect} from 'react-redux'
 
 function mapStateToProps(state){
   return { 
-    user : state.get('currentUser').toJS(),
     userName: state.get('userName'),
     email: state.get('email'),
     password: state.get('password'),
@@ -30,6 +29,7 @@ function mapDispatchToProps(dispatch){
   return {
     setProfile : (profile) => dispatch(setProfileAction(profile)),
     toggleLoggin : () => dispatch(toggleLoginAction()),
+    toggleEdit : () => dispatch(changeEditAction()),
     setEmail : (email) => dispatch(setEmailAction(email)),
     setPassword: (password) => dispatch(setPasswordAction(password)),
     setConfirm: (password) => dispatch(setConfirmPasswordAction(password)),
@@ -45,20 +45,17 @@ function mapDispatchToProps(dispatch){
  		e.preventDefault()
  		if(this.props.confirmPassword !== this.props.password){
  			this.props.setError("Password's don't match")
- 		}else{
-	 		console.log('attempting signup')	
+ 		}else{	
 	 		requestApi('api/v1/signup', 'POST')({userName: this.props.userName, email: this.props.email, password: this.props.password})
 		 		.then((response) => {
-		 			this.props.setUser(response.user)
+		 			this.props.setUser(response.user.userName)
 		 			requestApi('api/v1/createprofile', 'POST')({userName: this.props.userName, email: this.props.email})
-		 			console.log('CREATING PROFILE')
 		 		})
 			 			.then(() => {
 			 				requestApi('/api/v1/login', 'POST')({email:this.props.email, password:this.props.password})
-			 				console.log('LOGGING IN')
 			 			})
 				 			.then(() =>{
-				 				console.log('ALL DONE SWITCHING PAGES'),
+				 				this.props.toggleEdit(),
 				 				this.props.setEmail(''),
 				 				this.props.setPassword(''),
 				 				this.props.toggleLoggin(),

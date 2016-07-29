@@ -48,12 +48,12 @@
 
   app.post('/api/v1/login', passport.authenticate('local-login', {
         successRedirect : '/api/v1/login/true', // redirect to the secure profile section
-        failureRedirect : '/api/v1/login/false', // redirect back to the signup page if there is an error
+        failureRedirect : '/api/v1/login/false', // redirect back to the sxignup page if there is an error
         failureFlash : true // allow flash messages
       }));
 
   app.get('/api/v1/login/:result',function(req, res){
-    console.log("Login attempt Res: ", req.user)
+    //console.log("Login attempt Res: ", req.user)
     if(req.params.result=== 'true'){
       res.json({success: true, user: req.user.local})
     }else{
@@ -71,9 +71,15 @@
   });
 
   app.get('/api/v1/getuser', function(req,res){
-    console.log('GET USER REQ:', req)
-    console.log('GET USER RES:', res)
-    res.json(req.user.local)
+    console.log('GET USER REQ:', req.user)
+    if(req.user){
+      console.log('Object assign', Object.assign(req.user.local.toObject(), {loggedIn : true}))
+      return res.json(Object.assign(req.user.local, {loggedIn : true}))
+    } else {
+      res.json({loggedIn : false})
+    }
+
+    
   })
 
   app.get('/api/v1/getallusers', function(req,res){

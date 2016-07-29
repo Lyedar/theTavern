@@ -2,7 +2,7 @@ import React from 'react';
 import 'whatwg-fetch';
 import { Link } from 'react-router';
 import {browserHistory} from 'react-router';
-import {setSearchAction, setResultsAction, addUserAction} from '../redux/actions';
+import {setSearchAction, setResultsAction, addProfileAction} from '../redux/actions';
 import {connect} from 'react-redux';
 import requestApi from '../utilities/requests';
 import _ from 'lodash';
@@ -12,8 +12,7 @@ function mapStateToProps(state, ownProps){
 	console.log('stttate', state.toJS())
   	return {
 	    edit : state.get('edit'),
-	    value: state.getIn(['currentProfile', ownProps.field]),
-	    user: state.getIn(['currentUser', 'userName']),
+	    user: state.get('currentUser'),
 	    search: state.get('search').set('currentUser',state.getIn(['currentUser', 'userName'])),
 	    results: state.get('results')
 	}
@@ -23,7 +22,7 @@ function mapDispatchToProps(dispatch, ownProps){
   return {
     setSearch : (element, value) => dispatch(setSearchAction(element, value)),
     setResults: results => dispatch(setResultsAction(results)),
-    addUser: profile => dispatch(addUserAction(profile))
+    addProfile: profile => dispatch(addProfileAction(profile))
   }
 }
 
@@ -35,7 +34,7 @@ export default class SearchView extends React.Component {
 		requestApi('/api/v1/search', 'PUT')(self.props.search) 
 		.then((results) => {
 				self.props.setResults(results)
-				results.map((profile)=>this.props.addUser(profile))
+				results.map((profile)=>this.props.addProfile(profile))
 		})
 	}
 
@@ -47,7 +46,7 @@ export default class SearchView extends React.Component {
 							{profile.location}<br />
 							{profile.games}<br />
 							{_.get(profile, 'availabilityScore')}
-							<Calendar user={profile.userName} />
+							<Calendar userName={profile.userName} />
 						</div>)
 			})
 		}

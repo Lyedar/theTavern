@@ -10,7 +10,7 @@ var profileSchema = new Schema({
  location: String,
  age: String,
  games: [],
- host: String,
+ host: {type: Boolean, default: false},
  phone: String,
  email: String,
  alcohol: String,

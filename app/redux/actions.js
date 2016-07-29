@@ -1,17 +1,17 @@
 
 
 //USER/LOGIN ACTIONS
-function setUserAction(user){
+function setCurrentUserAction(user){
 	return{
 		type: "SET_USER",
 		user
 	}
 }
 
-function addUserAction(user) {
+function addProfileAction(profile) {
 	return{
-		type: "ADD_USER",
-		user
+		type: "ADD_PROFILE",
+		profile
 	}	
 }
 
@@ -58,6 +58,13 @@ function setConfirmPasswordAction(password){
 	}
 }
 
+function setSuggestionsAction(suggestions){
+	return {
+		type: 'SET_SUGGESTION',
+		suggestions
+	}
+}
+
 //PROFILE ACTIONS
 function updateProfileAction(field, value){
 	return {
@@ -68,10 +75,10 @@ function updateProfileAction(field, value){
 
 }
 
-function setProfileAction(profile){
+function setProfileUserNameAction(userName){
 	return{
-		type: 'SET_PROFILE',
-		profile
+		type: 'SET_PROFILE_USER_NAME',
+		userName
 	}
 
 }
@@ -136,14 +143,15 @@ function setErrorMessageAction(message){
 module.exports = {
 	toggleLoginAction,
 	loginTrueAction,
-	addUserAction,
-	setUserAction,
+	addProfileAction,
+	setCurrentUserAction,
 	setUserNameAction,
 	setEmailAction,
 	setPasswordAction,
 	setConfirmPasswordAction,
+	setSuggestionsAction,
 	updateProfileAction,
-	setProfileAction,
+	setProfileUserNameAction,
 	changeAvailabiltyAction,
 	changeEditAction,
 	addToListAction,

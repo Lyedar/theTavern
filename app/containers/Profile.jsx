@@ -10,28 +10,30 @@ import requestApi from '../utilities/requests'
 import Calendar from './Calendar'
 import ToggleEditButton from '../components/ToggleEditButton'
 import {ProfileField, ProfileListField, ProfileCheckboxField} from '../components/profileFields'
-import {setProfileAction, changeEditAction, addUserAction} from '../redux/actions'
+import {setProfileUserNameAction, changeEditAction, addProfileAction, setSuggestionsAction} from '../redux/actions'
 import editButtonBehavior from '../components/ToggleEditBehavior'
 import getProfileBehavior from '../components/getProfileBehavior'
 
 
 
 function mapStateToProps(state){
+  var profileUserName = state.get("profileUserName")
   return { 
-    currentProfile : state.get("currentProfile"),
-    userName : state.getIn(["currentProfile", "userName"]),
-    users: state.get('users'),
-    dungeonMaster: state.getIn(["currentProfile", "dungeonMaster"]),
-    player:  state.getIn(["currentProfile", "player"]),
+    profileUserName,
+    profile: state.getIn(['profiles', profileUserName]),
+    host: state.getIn(['profiles', profileUserName, 'host']),
+    dungeonMaster: state.getIn(['profiles', profileUserName, "dungeonMaster"]),
+    player:  state.getIn(['profiles', profileUserName, "player"]),
     edit : state.get("edit")
   }
 }
 
 function mapDispatchToProps(dispatch){
   return {
-    setProfile : (profile) => dispatch(setProfileAction(profile)),
+    setProfileUserName : (userName) => dispatch(setProfileUserNameAction(userName)),
     changeEdit : () => dispatch(changeEditAction()),
-    addUser : (user) => dispatch(addUserAction(user))
+    addProfile : (profile) => dispatch(addProfileAction(profile)),
+    setSuggestions : (suggestions) => dispatch(setSuggestionsAction(suggestions))
   }
 }
 
@@ -39,7 +41,7 @@ function mapDispatchToProps(dispatch){
 class CommitButtonView extends React.Component {
   updateProfile(e) {
     e.preventDefault()
-    requestApi('/api/v1/updateprofile', 'PUT')(this.props.currentProfile.toJS())
+    requestApi('/api/v1/updateprofile', 'PUT')(this.props.profile.toJS())
       .then(this.props.changeEdit)
   }
 
@@ -57,20 +59,35 @@ class ProfileView extends React.Component {
  whosProfile() {
   requestApi('/api/v1/getprofile/' + this.props.params.slug)()
     .then((profile)=>{
-      this.props.setProfile(profile)
-      this.props.addUser(profile)
+      this.props.setProfileUserName(profile.userName)
+      this.props.addProfile(profile)
     })
  }
+
+  componentWillUpdate(newProps){
+    if(newProps.params.slug !== newProps.profileUserName || !newProps.profileUserName){
+      this.whosProfile()
+    }
+  }
 
   componentWillMount(){
     this.whosProfile()
   }
 
+  suggestions() {
+    requestApi('/api/v1/suggestions/' + this.props.profileUserName)()
+      .then((suggestions) => {
+        // console.log("this is cool: ", this.)
+        this.props.setSuggestions(suggestions) 
+        suggestions.map((profile) => this.props.addProfile(profile))
+      })
+  }
+
   render() {
-    console.log('USERS EQUALS: ', this.props.users.toJS())
+
     return (
       <div className = 'container-fluid marginTop centerText profileCD'>
-        <h1 className = 'profileName'>{this.props.userName}'s Profile</h1>
+        <h1 className = 'profileName'>{this.props.profileUserName}'s Profile</h1>
         <h2 className = 'marginTop' >Description of individual goes here</h2>
         <Row>
           <Col md = {6}>
@@ -104,7 +121,7 @@ class ProfileView extends React.Component {
         </Row>
         <Row>
           <Col md = {12}>
-            <Calendar user={this.props.userName} />
+            <Calendar userName={this.props.params.slug} />
           </Col>
         </Row>
       </div>

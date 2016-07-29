@@ -3,7 +3,7 @@ import Navigation from 'containers/Navigation';
 import {connect} from 'react-redux';
 import classNames from 'classnames/bind';
 import styles from 'css/main';
-import {setUserAction, addUserAction, loginTrueAction} from '../redux/actions';
+import {setUserAction, addProfileAction, setCurrentUserAction, loginTrueAction} from '../redux/actions';
 import requestApi from '../utilities/requests';
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
 
@@ -21,42 +21,40 @@ const cx = classNames.bind(styles);
 
 function mapStateToProps(state){
   return { 
-    currentUser : state.get("currentUser"),
-    users: state.get('users')
+    currentUser : state.getIn(["currentUser", "userName"])
   }
 }
 
 function mapDispatchToProps(dispatch){
   return {
-    setUser : (profile) => dispatch(setUserAction(profile)),
-    addUser : (user) => dispatch(addUserAction(user)),
-    loginTrue : () => dispatch(loginTrueAction())
+    setUser : (userName) => dispatch(setCurrentUserAction(userName)),
+    addProfile: (user) => dispatch(addProfileAction(user)),
+    loginTrue : () => {
+                        const action = loginTrueAction()
+                        console.log('log in, so true', action)
+                        return dispatch(action)
+                      }
   }
 }
 
 export default class App extends Component {
   
-  constructor(props){
-    super(props);
-    this.state={
-      local: {}
-    };
-  }
 
    componentWillMount(){
     this.getUser()
   }
 
    getUser() {
-    console.log('HELLLLLLOOOOOOOOOOOO')
     requestApi('/api/v1/getuser')()
       .then((user) => {
-        if(user) {
+        console.log('got user')
+        if(user.loggedIn) {
           requestApi('/api/v1/getprofile/' + user.userName)()
             .then((profile)=>{
-            this.props.setUser(profile)
-            this.props.addUser(profile)
-            this.props.loginTrue()
+              this.props.setUser(profile.userName)
+
+              this.props.loginTrue()
+              this.props.addProfile(profile)
             })
         } else {
           this.props.setUser({})
@@ -64,29 +62,12 @@ export default class App extends Component {
       })
    }
 
-   resetState(){
-    var self = this
-    return fetch('/api/v1/getuser', {credentials : 'same-origin'})
-    .then(function(response) {
-      return response.json()
-    }).then(function(json) {
-      console.log('userdata', json)
-      self.setState({local: json.local || {}})
-    }).catch(function(ex) {
-      console.log('parsing failed.....', ex)
-    })
-  }
-
-  toggleLogin(){
-  	this.resetState()
-  }
 
   render() {
     return (
       <div className={cx('app')}>
-        <Navigation toggleLogin={this.toggleLogin.bind(this)} user={this.state.local.userName} />
-        {this.props.children && React.cloneElement(this.props.children, {user: this.state.local.userName,
-  				   														 toggleLogin: this.toggleLogin.bind(this)})}
+        <Navigation user={this.props.currentUser} />
+        {this.props.children}
       </div>
     );
   }

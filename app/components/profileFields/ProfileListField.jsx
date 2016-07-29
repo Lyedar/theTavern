@@ -1,12 +1,14 @@
 import React from 'react';
 import {addToListAction, deleteFromListAction} from '../../redux/actions'
+import {Link} from 'react-router';
 import {Button} from 'react-bootstrap'
 import {connect} from 'react-redux'
 
 function mapStateToProps(state, ownProps){
+  var profileUserName = state.get('profileUserName')
   return {
     edit : state.get('edit'),
-    value: state.getIn(['currentProfile', ownProps.field]),
+    value: state.getIn(['profiles', profileUserName, ownProps.field]),
   }
 
 }
@@ -30,7 +32,7 @@ export default class ProfileListFieldView extends React.Component {
 			if(this.props.edit) {
 				return(<div>{item}<span className='red invisableButton' onClick={() => this.props.deleteFromList(this.props.field, item)}>X</span><br/></div>)
 			} else {
-				return(<div>{item}<br/></div>)
+				return(<Link to={'/profile/' + item}>{item}<br/></Link>)
 			}
 		})
 	}

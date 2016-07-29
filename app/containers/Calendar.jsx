@@ -6,14 +6,14 @@ import {changeAvailabiltyAction} from '../redux/actions'
 import {connect} from 'react-redux'
 
 function mapStateToProps(state, ownprops){
-	var loggedInUser = state.getIn(['currentUser','userName'])
-	var user = ownprops.user || loggedInUser
-	console.log("CALENDAR", user)
+	var currentUser = state.get('currentUser')
+	var userName = ownprops.userName || currentUser
+
 	return{
-		availability: state.getIn(["users", user, "availability"]),
-		userAvailability:  state.getIn(["users", loggedInUser , "availability"]),
-		user, 
-		loggedInUser,
+		availability: state.getIn(["profiles", userName, "availability"]),
+		userAvailability:  state.getIn(["profiles", currentUser , "availability"]),
+		userName, 
+		currentUser,
 		edit: state.get('edit')
 	}
 }
@@ -53,9 +53,9 @@ export default class CalendarView extends React.Component {
 	}
 
 	match(day, time){
-		const {user, loggedInUser, availability, userAvailability} = this.props
-		if (user !== loggedInUser && loggedInUser){
-			return availability.getIn([day,time]) && userAvailability.getIn([day, time])
+		const {userName, currentUser, availability, userAvailability} = this.props
+		if (userName !== currentUser && currentUser){
+			//return availability.getIn([day,time]) && userAvailability.getIn([day, time])
 		} 
 		return false
 	}
@@ -80,7 +80,6 @@ export default class CalendarView extends React.Component {
 	}
 
 	render() {
-		console.log('CALENDAR PROPS', this.props)
 		if(this.props.availability){
 			return(
 				<div className = 'profileCal'>

@@ -5,7 +5,7 @@ import classNames from 'classnames/bind';
 import styles from 'css/components/navigation';
 import {Navbar, Nav, NavItem, NavDropdown, MenuItem, Form, FormGroup, ControlLabel, FormControl, Button} from 'react-bootstrap'
 import requestApi from '../utilities/requests'
-import {setUserAction, toggleLoginAction, setEmailAction, setPasswordAction, addUserAction} from '../redux/actions'
+import {setCurrentUserAction, toggleLoginAction, setEmailAction, setPasswordAction, addProfileAction} from '../redux/actions'
 const cx = classNames.bind(styles);
 const {Header, Brand} = Navbar
 
@@ -13,7 +13,7 @@ const {Header, Brand} = Navbar
 function mapStateToProps(state, ownProps){
   return {
     edit : state.get('edit'),
-    user : state.get('currentUser').toJS(),
+    currentUser : state.get('currentUser'),
     email: state.get('email'),
     password: state.get('password'),
     loggedIn: state.get('loggedIn')
@@ -23,11 +23,10 @@ function mapStateToProps(state, ownProps){
 
 function mapDispatchToProps(dispatch, ownProps){
   return {
-    setUser : (user) => dispatch(setUserAction(user)),
+    setCurrentUser : (user) => dispatch(setCurrentUserAction(user)),
     toggleLogin: () => dispatch(toggleLoginAction()), 
     setEmail: (value) => dispatch(setEmailAction(value)), 
-    setPassword: (value) => dispatch(setPasswordAction(value)),
-    addUser: (user) => dispatch(addUserAction(user))
+    setPassword: (value) => dispatch(setPasswordAction(value))
   }
 
 }
@@ -35,20 +34,13 @@ function mapDispatchToProps(dispatch, ownProps){
 
 
 
-class NavigationView extends Component {
-
-
-  // componentWillMount() {
-  //   requestApi('/api/v1/getuser')().then(user=>this.props.setUser(user))
-  // }
-
-  
+class NavigationView extends Component {  
 
   dropDown(){
-    if(this.props.user){
+    if(this.props.currentUser){
       return(
-        <NavDropdown eventKey={2} title= {this.props.user.userName} id = "user-drop-down">
-          <MenuItem eventKey={2.1}><Link to={/profile/ + this.props.user.userName}>Profile</Link></MenuItem>
+        <NavDropdown eventKey={2} title= {this.props.currentUser} id = "user-drop-down">
+          <MenuItem eventKey={2.1}><Link to={/profile/ + this.props.currentUser}>Profile</Link></MenuItem>
           <MenuItem eventKey={2.3}><Link to="/logout">Log Out</Link></MenuItem>  
         </NavDropdown> 
       )     
@@ -83,11 +75,9 @@ class NavigationView extends Component {
       .then(loginSuccess=>
         {
           if(loginSuccess.success){
+            this.props.setCurrentUser(loginSuccess.user.userName)
+            console.log('CURRENT USER', this.props.currentUser)
             this.props.toggleLogin()
-            console.log("TOGGLELOGIN", this.props.loggedIn)
-            this.props.setUser(loginSuccess.user)
-            console.log('THE PROPS', this.props)
-            this.props.addUser(loginSuccess.user)
             browserHistory.push('/profile/' + loginSuccess.user.userName)
           } else {
             alert('Login failed. You should feel bad.')
