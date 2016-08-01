@@ -25,7 +25,7 @@ function mapDispatchToProps(dispatch, ownProps){
 
 export default class ProfileFieldsView extends React.Component {
   render(){
-    if (this.props.edit){
+    if (this.props.field !== 'userName' && this.props.field !== 'email' && this.props.edit){
       return  (<span>{this.props.label}:
         <input className="black" type = 'text' onChange={(e) => this.props.updateProfile(e.target.value)} value = {this.props.value}/>
         </span>)

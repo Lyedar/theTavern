@@ -20,6 +20,7 @@ function retrieveOne(req, res) {
 }
 
 function updateOne(req, res) {
+	console.log('Update resquest for ', req.body.userName , ' with ', req.body)
 	Profile.findOneAndUpdate({userName:req.body.userName}, req.body, function(err, profile) {
 		if(err) return console.log(err);
 		res.writeHead(200, {"Content-Type": "text/json"})

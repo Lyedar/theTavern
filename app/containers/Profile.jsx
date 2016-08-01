@@ -13,14 +13,16 @@ import {ProfileField, ProfileListField, ProfileCheckboxField} from '../component
 import {setProfileUserNameAction, changeEditAction, addProfileAction, setSuggestionsAction} from '../redux/actions'
 import editButtonBehavior from '../components/ToggleEditBehavior'
 import getProfileBehavior from '../components/getProfileBehavior'
-
+import CommitButton from '../components/CommitButton'
 
 
 function mapStateToProps(state){
   var profileUserName = state.get("profileUserName")
   return { 
     profileUserName,
+    state: state,
     profile: state.getIn(['profiles', profileUserName]),
+    profiles: state.get('profiles'),
     host: state.getIn(['profiles', profileUserName, 'host']),
     dungeonMaster: state.getIn(['profiles', profileUserName, "dungeonMaster"]),
     player:  state.getIn(['profiles', profileUserName, "player"]),
@@ -36,22 +38,6 @@ function mapDispatchToProps(dispatch){
     setSuggestions : (suggestions) => dispatch(setSuggestionsAction(suggestions))
   }
 }
-
-
-class CommitButtonView extends React.Component {
-  updateProfile(e) {
-    e.preventDefault()
-    requestApi('/api/v1/updateprofile', 'PUT')(this.props.profile.toJS())
-      .then(this.props.changeEdit)
-  }
-
-  render(){
-    return <div className='btn btn-primary' onClick={(e)=>this.updateProfile(e)}>Commit</div>
-  }
-}
-
-var CommitButton = editButtonBehavior(getProfileBehavior(CommitButtonView))
-
 
 
 class ProfileView extends React.Component {
@@ -110,7 +96,7 @@ class ProfileView extends React.Component {
                 {this.props.edit ? <li><ProfileListField label='Blocked Users' field='blockedUser' /></li> : ''}
               </ul>
             </h4>
-            <CommitButton /><br/><br/>
+            <CommitButton/><br/><br/>
           </Col>
 
           <Col md = {6}>

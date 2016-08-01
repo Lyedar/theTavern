@@ -27,7 +27,7 @@ function tavernReducer(previousState, action){
 		case 'CHANGE_EDITABLE':
 			return previousState.set('edit', !previousState.get('edit'));
 		case 'UPDATE_PROFILE':
-			return previousState.setIn(['profile', name, action.field], action.value)
+			return previousState.setIn(['profiles', name, action.field], action.value)
 		case 'SET_PROFILE_USER_NAME':
 			return previousState.set('profileUserName' , action.userName)
 		case 'SET_AVAILABILTY':
