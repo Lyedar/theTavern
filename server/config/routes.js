@@ -9,6 +9,7 @@
  var User=require("../models/userModel")
  var profileController = require('../controllers/profileController')
  var searchController = require('../controllers/searchController')
+ var suggestionsController = require('../controllers/suggestionsController')
 
  module.exports = function(app, passport) {
   
@@ -115,6 +116,8 @@
 
   //search stuff
   app.put('/api/v1/search', searchController.search);
+
+  app.get('api/v1/suggestions/:slug', suggestionsController.suggestions)
 
   app.get('*', function (req, res, next) {
     App(req, res);
