@@ -32,6 +32,7 @@ function getUser(user, callback) {
 function filterSearch(user, profiles) {
 	var userGames = new Immutable.Set(user.games)
 	profiles = profiles
+		.filter(profile => user.email !== profile.email )
 		.map(profile => Object.assign(profile, {availabilityScore: compareTimes(user.availability, profile.availability)}) )
 		.map(profile => Object.assign(profile, {gameOverlap: userGames.intersect(profile.games).size}))
 		.sort((a,b) => {
@@ -54,7 +55,7 @@ function filterSearch(user, profiles) {
 			}
 			var score = availabilityModifier + overlapModifier + locationModifier
 			console.log('FINAL SCORE! ', score)
-			return score
+			return score * -1
 		})
 		console.log('SORTED ARRAY: ', profiles)
 		return profiles.slice(0,3)

@@ -42,7 +42,7 @@ class suggestionsView extends React.Component {
 		if(this.props.suggestions) {
 			return this.props.suggestions.map(profile => 
 				<div>
-					{profile.userName}
+					<Link to={'/profile/' + profile.userName}>{profile.userName}</Link>
 				</div>
 			)
 		}

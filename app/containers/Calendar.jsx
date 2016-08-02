@@ -55,7 +55,7 @@ export default class CalendarView extends React.Component {
 	match(day, time){
 		const {userName, currentUser, availability, userAvailability} = this.props
 		if (userName !== currentUser && currentUser){
-			//return availability.getIn([day,time]) && userAvailability.getIn([day, time])
+			return availability.getIn([day,time]) && userAvailability.getIn([day, time])
 		} 
 		return false
 	}
