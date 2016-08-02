@@ -76,7 +76,6 @@ class NavigationView extends Component {
         {
           if(loginSuccess.success){
             this.props.setCurrentUser(loginSuccess.user.userName)
-            console.log('CURRENT USER', this.props.currentUser)
             this.props.toggleLogin()
             browserHistory.push('/profile/' + loginSuccess.user.userName)
           } else {
@@ -103,7 +102,6 @@ class NavigationView extends Component {
     }
 
   render() {
-    console.log('this is logged in state', this.props.loggedIn)
     return (
       <Navbar className={"navbar-fixed-top"} fluid = 'true'>
         <Header>
