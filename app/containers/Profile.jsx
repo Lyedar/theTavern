@@ -101,9 +101,7 @@ class ProfileView extends React.Component {
           </Col>
 
           <Col md = {6}>
-            <a><li>suggestions/party #1</li></a>
             <Suggestions />
-            <a><li>suggestions/party #3</li></a>
           </Col>
         </Row>
         <Row>

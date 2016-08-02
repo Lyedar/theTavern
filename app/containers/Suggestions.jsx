@@ -22,7 +22,8 @@ function mapStateToProps (state) {
 function mapDispatchToProps (dispatch){
 
 	return {
-		setSuggestions : (suggestions) => dispatch(setSuggestionsAction(suggestions))
+		setSuggestions : (suggestions) => dispatch(setSuggestionsAction(suggestions)),
+		addProfile : (profile) => dispatch(addProfileAction(profile))
 	}
 
 }
@@ -33,16 +34,23 @@ class suggestionsView extends React.Component {
 	componentWillMount(){
 		requestApi('/api/v1/suggestions/' + this.props.currentUser)()
 			.then((results)=>{
-				console.log('results', results)
 				this.props.setSuggestions(results)
+				results.map((profile) => this.props.addProfile(profile))
 			})
 	}
 
 	displaySuggestions() {
 		if(this.props.suggestions) {
+			console.log('all the suggestions: ', this.props.suggestions)
 			return this.props.suggestions.map(profile => 
 				<div>
 					<Link to={'/profile/' + profile.userName}>{profile.userName}</Link>
+					{' '}
+					{profile.dm ? <span>DM</span> : <span>Player</span>}<br />
+					{profile.location}<br />
+					{profile.games[0]}
+					{profile.availabilityScore}
+					<Calendar userName={profile.userName} />
 				</div>
 			)
 		}
@@ -51,6 +59,7 @@ class suggestionsView extends React.Component {
 	render(){
 		console.log(this.props.suggestions)
 		return(<span>
+				<h3>Suggested Possible Party Members</h3>
 				{this.displaySuggestions()}
 			</span>)
 	}
