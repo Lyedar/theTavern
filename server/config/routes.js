@@ -117,7 +117,7 @@
   //search stuff
   app.put('/api/v1/search', searchController.search);
 
-  app.get('api/v1/suggestions/:slug', suggestionsController.suggestions)
+  app.get('/api/v1/suggestions/:slug', suggestionsController.suggestions)
 
   app.get('*', function (req, res, next) {
     App(req, res);

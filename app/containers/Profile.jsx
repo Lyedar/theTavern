@@ -8,6 +8,7 @@ import _ from 'lodash';
 const cx = classNames.bind(styles);
 import requestApi from '../utilities/requests'
 import Calendar from './Calendar'
+import Suggestions from './Suggestions'
 import ToggleEditButton from '../components/ToggleEditButton'
 import {ProfileField, ProfileListField, ProfileCheckboxField} from '../components/profileFields'
 import {setProfileUserNameAction, changeEditAction, addProfileAction, setSuggestionsAction} from '../redux/actions'
@@ -101,7 +102,7 @@ class ProfileView extends React.Component {
 
           <Col md = {6}>
             <a><li>suggestions/party #1</li></a>
-            <a><li>suggestions/party #2</li></a>
+            <Suggestions />
             <a><li>suggestions/party #3</li></a>
           </Col>
         </Row>

@@ -4,14 +4,14 @@ var Profile = require('../models/profileModel')
 function suggestions(req, res) {
 	console.log('Suggesting')
 	const query = {
-		player: req.body.player
 	}
-
+	console.log('Start suggestion search')
 	Profile.find(query).exec(function(err, profiles) {
 		if(err) return console.log(err);
 		console.log('found', profiles)
-		getUser({userName:req.params.slug} || 'Fred').then(
+		getUser(req.params.slug).then(
 			(user)=>{
+				console.log('Made it past the requests')
 				var results = filterSearch(user, profiles);
 				res.writeHead(200, {"Content-Type": "text/json"});
 				res.end(JSON.stringify(results));		
@@ -32,12 +32,33 @@ function getUser(user, callback) {
 function filterSearch(user, profiles) {
 	var userGames = new Immutable.Set(user.games)
 	profiles = profiles
-		.map((profile) => profile.toObject())
-		.filter((profile) =>  user.email !== profile.email )
-		.filter((profile)=> user.location.toLowerCase() === profile.location.toLowerCase())	
-		.map((profile) => Object.assign({}, profile, {availabilityScore: compareTimes(user.availability, profile.availability)}))
-		.filter((profile)=> profile.availabilityScore)	
-		.filter((profile) => userGames.intersect(profile.games).size)	
+		.map(profile => Object.assign(profile, {availabilityScore: compareTimes(user.availability, profile.availability)}) )
+		.map(profile => Object.assign(profile, {gameOverlap: userGames.intersect(profile.games).size}))
+		.sort((a,b) => {
+			var score 
+			console.log('A is equal to ', a)
+			console.log('B is equal to ', b)
+			var availabiltyModifier =0;
+			if (a.availabilityScore > b.availabilityScore){
+				availabilityModifier = 5
+			} else if (b.availabilityScore > a.availabilityScore){
+				availabilityModifier = -5
+			}
+			var overlapModifier = a.gameOverlap - b.gameOverlap
+			var locationModifier = 0
+			if(user.location.toLowerCase() === a.location.toLowerCase()){
+				locationModifier += 5
+			}
+			if(user.location.toLowerCase() === b.location.toLowerCase()){
+				locationModifier -= 5
+			}
+			var score = availabilityModifier + overlapModifier + locationModifier
+			console.log('FINAL SCORE! ', score)
+			return score
+		})
+		console.log('SORTED ARRAY: ', profiles)
+		return profiles.slice(0,3)
+	
 }
 
 function compareTimes(userTime, profileTime){
