@@ -73,13 +73,14 @@ class ProfileView extends React.Component {
         this.whosProfile()  
       }
       
+
+      console.log('FROM PROFILE ', this.props.profiles.getIn([this.props.currentUser, "party"]).toJS().length !== 0)
       return (
         <div className = 'container-fluid marginTop centerText profileCD'>
           <h1 className = 'profileName'>{this.props.profileUserName}'s Profile</h1>
           <h2 className = 'marginTop' >Description of individual goes here</h2>
           <Row>
             <Col md = {6}>
-            {this.props.profileUserName === this.props.currentUser ? <ToggleEditButton/> : ''}
               <h4>
                 <ul className = 'leftText'>
                   <li><ProfileField field='name' label="Name"/></li>
@@ -102,7 +103,7 @@ class ProfileView extends React.Component {
             </Col>
 
             <Col md = {6}>
-              {this.props.profileUserName === this.props.currentUser ? <Suggestions /> : <Party />}
+              {this.props.profileUserName === this.props.currentUser && this.props.profiles.getIn([this.props.currentUser, "party"]).toJS().length === 0 ? <Suggestions /> : <Party userName = {this.props.profileUserName} />}
             </Col>
           </Row>
           <Row>
