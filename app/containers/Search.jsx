@@ -42,10 +42,9 @@ export default class SearchView extends React.Component {
 		if(this.props.results) {
 			return this.props.results.map((profile) => {
 				return (<div>
-							<Link to={'/profile/'+profile.userName}>{profile.userName}</Link><br />
+							<h4><Link to={'/profile/'+profile.userName}>{profile.userName}</Link></h4>
 							{profile.location}<br />
 							{profile.games}<br />
-							{_.get(profile, 'availabilityScore')}
 							<Calendar userName={profile.userName} />
 						</div>)
 			})
@@ -54,10 +53,9 @@ export default class SearchView extends React.Component {
 
 	render () {
 		var {dm, player, list} = this.props.search.toJS()
-		console.log('this.props.user', this.props)
 		return (
-			<div className='marginBiggerTop'>
-				<h1>Search Page</h1>
+			<div className='container-fluid marginTop centerText profileCD'>
+				<h1 className = 'profileName'>Search Page</h1>
 	            <select id='valueSelector' onChange={(e) => this.props.setSearch('list', e.target.value)}>
 	            	<option selected={list==='times'} value='times'>Times</option>
 	            	<option selected={list==='location'} value='location'>Location</option>

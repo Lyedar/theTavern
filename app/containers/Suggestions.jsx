@@ -84,7 +84,6 @@ class suggestionsView extends React.Component {
 			this.findSuggestions()
 		}
 		if(newProps.currentUser && this.props.currentUser && newProps.currentUser.toJS().friends.length !== this.props.currentUser.toJS().friends.length){
-			console.log('Making profile update request: ', this.props.currentUser.toJS())
 			requestApi("/api/v1/updateprofile", 'PUT')(newProps.currentUser.toJS())
 			.then(
 				this.findSuggestions()
@@ -105,7 +104,6 @@ class suggestionsView extends React.Component {
 		    <Calendar userName = {profile.userName}/>
 		  </Popover>
 		);
-		console.log('suggestions', this.props.suggestions)
 		if(this.props.suggestions) {
 			return this.props.suggestions.map(profile => 
 				<div>
