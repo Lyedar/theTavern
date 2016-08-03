@@ -51,11 +51,9 @@ function compareTimes(userTime, profileTime){
 class suggestionsView extends React.Component {
 
 	findSuggestions(){
-		console.log('finding suggestions ' + this.props.currentUserName)
 		if(this.props.currentUserName){
 			requestApi('/api/v1/suggestions/' + this.props.currentUserName)()
 				.then((results)=>{
-					console.log('we found some suggestions')
 					results.sort((a,b) => {
 						var score 
 						var availabilityModifier =0;
@@ -66,7 +64,6 @@ class suggestionsView extends React.Component {
 						}
 						var overlapModifier = a.gameOverlap - b.gameOverlap
 						var locationModifier = 0
-						console.log('current user', this.props.currentUser)
 						if(this.props.currentUser.toJS().location.toLowerCase() === a.location.toLowerCase()){
 							locationModifier += 5
 						}
@@ -115,14 +112,16 @@ class suggestionsView extends React.Component {
 					<Link to={'/profile/' + profile.userName}>{profile.userName}</Link>
 					{' '}
 					{profile.dm ? <span>DM</span> : <span>Player</span>}<br />
-					{profile.location}<br />
-					{profile.games[0]}<br />
+					Lives in: {' '}
+					{profile.location}<br/>
+					First Listed Game: <br/>
+					{profile.games[0]}<br/>
 					Similar Times: 
 					<OverlayTrigger trigger={['hover', 'focus']} placement="top" overlay={popoverHoverFocus(profile)}>
       					<Button className = 'green invisableButton'>{compareTimes(this.props.userAvailability, profile.availability)}</Button>
     				</OverlayTrigger>
     				<br />
-    				<button onClick={()=>this.addFriend(profile.userName)}>Add to Friends</button>
+    				<Button bsStyle = 'primary' onClick={()=>this.addFriend(profile.userName)}>Add to Friends</Button>
 				</div>
 			)
 		}

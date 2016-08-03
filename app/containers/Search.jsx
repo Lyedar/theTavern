@@ -42,7 +42,7 @@ export default class SearchView extends React.Component {
 		if(this.props.results) {
 			return this.props.results.map((profile) => {
 				return (<div>
-							{profile.userName}<br />
+							<Link to={'/profile/'+profile.userName}>{profile.userName}</Link><br />
 							{profile.location}<br />
 							{profile.games}<br />
 							{_.get(profile, 'availabilityScore')}

@@ -29,16 +29,10 @@ function filterSearch(user, profiles) {
 	var userGames = new Immutable.Set(user.games)
 	profiles = profiles
 		.filter(profile => user.email !== profile.email )
-		.filter(profile => {
-			console.log(user.friends.indexOf(profile.userName) === -1)
-			return user.friends.indexOf(profile.userName) === -1
-		})
+		.filter(profile => user.friends.indexOf(profile.userName) === -1)
 		.filter(profile => user.blockedUser.indexOf(profile.userName) === -1) 
 		.map(profile => Object.assign(profile, {availabilityScore: compareTimes(user.availability, profile.availability)}) )
 		.map(profile => Object.assign(profile, {gameOverlap: userGames.intersect(profile.games).size}))
-
-
-		console.log('profiteroles', profiles)
 		return profiles.slice(0,3)
 	
 }
