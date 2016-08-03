@@ -136,6 +136,10 @@ button {
 	margin: 0 auto;
 }
 
+.popover .profileCal{
+	padding: 30px;
+}
+
 .profileCal th {
 	padding: 5px;
 }

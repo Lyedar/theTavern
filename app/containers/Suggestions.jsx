@@ -1,9 +1,10 @@
 import React from 'react';
 import 'whatwg-fetch';
+import styles from 'css/components/home';
 var Immutable = require('immutable')
 import { Link } from 'react-router';
 import {browserHistory} from 'react-router';
-import {setSuggestionsAction, setResultsAction, addProfileAction} from '../redux/actions';
+import {setSuggestionsAction, setResultsAction, addProfileAction, addToListAction} from '../redux/actions';
 import {connect} from 'react-redux';
 import requestApi from '../utilities/requests';
 import _ from 'lodash';
@@ -30,7 +31,8 @@ function mapDispatchToProps (dispatch){
 
 	return {
 		setSuggestions : (suggestions) => dispatch(setSuggestionsAction(suggestions)),
-		addProfile : (profile) => dispatch(addProfileAction(profile))
+		addProfile : (profile) => dispatch(addProfileAction(profile)),
+		addToFriends: (item) => dispatch(addToListAction('friends', item))
 	}
 
 }
@@ -60,12 +62,18 @@ class suggestionsView extends React.Component {
 			})
 	}
 
+
+	addFriend(name){
+		console.log(this.props)
+		this.props.addToFriends(name);
+	}
+
+
 	displaySuggestions() {
 
-
-		const popoverHoverFocus = (
-		  <Popover id="popover-trigger-hover-focus" title="Popover bottom">
-		    <strong>Holy guacamole!</strong> Check this info.
+		const popoverHoverFocus = (profile) => (
+		  <Popover id="popover-trigger-hover-focus" style={{maxWidth: '10000000px'}} className = 'black' title={profile.userName + "'s Calendar"}>
+		    <Calendar userName = {profile.userName}/>
 		  </Popover>
 		);
 
@@ -78,10 +86,12 @@ class suggestionsView extends React.Component {
 					{profile.dm ? <span>DM</span> : <span>Player</span>}<br />
 					{profile.location}<br />
 					{profile.games[0]}<br />
-					Similar Times: {compareTimes(this.props.userAvailability, profile.availability)}
-					<OverlayTrigger trigger={['hover', 'focus']} placement="bottom" overlay={popoverHoverFocus}>
-      					<Button>Hover + Focus</Button>
+					Similar Times: 
+					<OverlayTrigger trigger={['hover', 'focus']} placement="top" overlay={popoverHoverFocus(profile)}>
+      					<Button className = 'green invisableButton'>{compareTimes(this.props.userAvailability, profile.availability)}</Button>
     				</OverlayTrigger>
+    				<br />
+    				<button onClick={()=>this.addFriend(profile.userName)}>Add to Friends</button>
 				</div>
 			)
 		}
