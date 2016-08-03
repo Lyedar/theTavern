@@ -61,15 +61,6 @@ class ProfileView extends React.Component {
     this.whosProfile()
   }
 
-  suggestions() {
-    requestApi('/api/v1/suggestions/' + this.props.profileUserName)()
-      .then((suggestions) => {
-        // console.log("this is cool: ", this.)
-        this.props.setSuggestions(suggestions) 
-        suggestions.map((profile) => this.props.addProfile(profile))
-      })
-  }
-
   render() {
 
     return (

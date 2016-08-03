@@ -41,30 +41,62 @@ function mapDispatchToProps (dispatch){
 
 
 function compareTimes(userTime, profileTime){
-	console.log('USERTIME ', userTime)
-	console.log('PROFILETIME ', profileTime)
 	const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 	const times = ['Morning', 'Lunch', 'Afternoon', 'Night', 'GraveYard']
 	const returnVal = days.map(day=> times.filter(time => userTime.getIn([day,time]) && profileTime[day][time]).length)
-						  .reduce((acc, next) => acc + next)
-	console.log('ReturnVal ', returnVal)					  
+						  .reduce((acc, next) => acc + next)				  
 	return returnVal
 }	
 
 class suggestionsView extends React.Component {
 
+	findSuggestions(){
+		console.log('finding suggestions ' + this.props.currentUserName)
+		if(this.props.currentUserName){
+			requestApi('/api/v1/suggestions/' + this.props.currentUserName)()
+				.then((results)=>{
+					console.log('we found some suggestions')
+					results.sort((a,b) => {
+						var score 
+						var availabilityModifier =0;
+						if (a.availabilityScore > b.availabilityScore){
+							availabilityModifier = 5
+						} else if (b.availabilityScore > a.availabilityScore){
+							availabilityModifier = -5
+						}
+						var overlapModifier = a.gameOverlap - b.gameOverlap
+						var locationModifier = 0
+						console.log('current user', this.props.currentUser)
+						if(this.props.currentUser.toJS().location.toLowerCase() === a.location.toLowerCase()){
+							locationModifier += 5
+						}
+						if(this.props.currentUser.toJS().location.toLowerCase() === b.location.toLowerCase()){
+							locationModifier -= 5
+						}
+						var score = availabilityModifier + overlapModifier + locationModifier
+						return score * -1
+					})
+					this.props.setSuggestions(results)
+					results.map((profile) => this.props.addProfile(profile))
+				})
+		}
+	}
 
-	componentWillMount(){
-		requestApi('/api/v1/suggestions/' + this.props.currentUserName)()
-			.then((results)=>{
-				this.props.setSuggestions(results)
-				results.map((profile) => this.props.addProfile(profile))
-			})
+	componentWillReceiveProps(newProps){
+		if(this.props.currentUserName !== newProps.currentUserName || newProps.currentUserName && !newProps.suggestions) {
+			this.findSuggestions()
+		}
+		if(newProps.currentUser && this.props.currentUser && newProps.currentUser.toJS().friends.length !== this.props.currentUser.toJS().friends.length){
+			console.log('Making profile update request: ', this.props.currentUser.toJS())
+			requestApi("/api/v1/updateprofile", 'PUT')(newProps.currentUser.toJS())
+			.then(
+				this.findSuggestions()
+				)
+		}
 	}
 
 
-	addFriend(name){
-		console.log(this.props)
+	addFriend(name){	
 		this.props.addToFriends(name);
 	}
 
@@ -76,9 +108,8 @@ class suggestionsView extends React.Component {
 		    <Calendar userName = {profile.userName}/>
 		  </Popover>
 		);
-
+		console.log('suggestions', this.props.suggestions)
 		if(this.props.suggestions) {
-			console.log('all the suggestions: ', this.props.suggestions)
 			return this.props.suggestions.map(profile => 
 				<div>
 					<Link to={'/profile/' + profile.userName}>{profile.userName}</Link>
@@ -98,7 +129,6 @@ class suggestionsView extends React.Component {
 	}
 
 	render(){
-		console.log(this.props.suggestions)
 		return(<span>
 				<h3>Suggested Possible Party Members</h3>
 				{this.displaySuggestions()}
