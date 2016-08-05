@@ -25,8 +25,7 @@ function mapStateToProps(state){
     loggedIn: state.get('loggedIn'),
     currentUser: state.get('currentUser'),
     profile: state.getIn(['profiles', profileUserName]),
-    profiles: state.get('profiles'),
-    
+    profiles: state.get('profiles'), 
     host: state.getIn(['profiles', profileUserName, 'host']),
     dungeonMaster: state.getIn(['profiles', profileUserName, "dungeonMaster"]),
     player:  state.getIn(['profiles', profileUserName, "player"]),

@@ -6,7 +6,7 @@ var times = {Morning: {type: Boolean, default: true}, Lunch: {type: Boolean, def
 var profileSchema = new Schema({
  userName: {type: String, required: true},
  name: {type: String, default : ''},
- description: {type: String, default: ''},
+ description: {type: String, default: 'Your Description Goes Here'},
  location: {type: String, default: ''},
  age: {type: String, default: ''},
  games: [],

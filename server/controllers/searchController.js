@@ -2,20 +2,16 @@ var Immutable = require('immutable')
 var Profile = require('../models/profileModel')
 
 function search(req, res) {
-	console.log('Searching')
 	const query = {
 		player: req.body.player
 	}
 
 	Profile.find(query).exec(function(err, profiles) {
 		if(err) return console.log(err);
-		console.log('found', profiles)
-		getUser(req.body.currentUser || 'Fred').then(
+		getUser(req.body.currentUser).then(
 			(user)=>{
-				console.log('getting user', user, req.body.list)
 				var results = filterSearch(user, profiles, req.body.list);
 				res.writeHead(200, {"Content-Type": "text/json"});
-				console.log('attempting to send search results Results: ', results)
 				res.end(JSON.stringify(results));		
 			}
 		);
@@ -32,19 +28,10 @@ function getUser(user, callback) {
 }
 
 function filterSearch(user, profiles, key) {
-	console.log('filter search', profiles)
-
-	const spy = (x) => {
-		console.log('spying', x)
-		return x
-	}
 	profiles = profiles
-					.map(spy)
 					.map(profile => profile.toObject())
-					.map(spy)
 					.filter((profile) =>  user.email !== profile.email )
-
-	console.log('PROFILES',profiles)				
+				
 	switch(key) {
 		case 'times':
 			return profiles
