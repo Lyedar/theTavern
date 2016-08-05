@@ -3,7 +3,7 @@ import 'whatwg-fetch';
 import { Link, IndexLink } from 'react-router';
 import {browserHistory} from 'react-router';
 import {Form, FormGroup, FormControl, ControlLabel, Col, Row, Button, HelpBlock} from 'react-bootstrap'
-import {setUserAction, setUserNameAction, toggleLoginAction, setEmailAction, setPasswordAction, setConfirmPasswordAction, setErrorMessageAction, changeEditAction} from '../redux/actions'
+import {setCurrentUserAction, setUserNameAction, toggleLoginAction, setEmailAction, setPasswordAction, setConfirmPasswordAction, setErrorMessageAction, changeEditAction} from '../redux/actions'
 import requestApi from '../utilities/requests'
 import GroupForm from '../components/GroupForm'
 import {connect} from 'react-redux'
@@ -16,6 +16,7 @@ import {connect} from 'react-redux'
 
 function mapStateToProps(state){
   return { 
+  	currentUser: state.get('currentUser'),
     userName: state.get('userName'),
     email: state.get('email'),
     password: state.get('password'),
@@ -34,7 +35,7 @@ function mapDispatchToProps(dispatch){
     setPassword: (password) => dispatch(setPasswordAction(password)),
     setConfirm: (password) => dispatch(setConfirmPasswordAction(password)),
     setUserName: (userName) => dispatch(setUserNameAction(userName)),
-    setUser: (user) => dispatch(setUserAction(user)),
+    setUser: (user) => dispatch(setCurrentUserAction(user)),
     setError: (message) => dispatch(setErrorMessageAction(message))
   }
 }
@@ -46,8 +47,10 @@ function mapDispatchToProps(dispatch){
  		if(this.props.confirmPassword !== this.props.password){
  			this.props.setError("Password's don't match")
  		}else{	
+ 			console.log('UserName: ', this.props.userName, ' Email: ', this.props.email, ' Password: ', this.props.password)
 	 		requestApi('api/v1/signup', 'POST')({userName: this.props.userName, email: this.props.email, password: this.props.password})
 		 		.then((response) => {
+		 			console.log('SIGNUP RESPONSE: ', response)
 		 			this.props.setUser(response.user.userName)
 		 			requestApi('api/v1/createprofile', 'POST')({userName: this.props.userName, email: this.props.email})
 		 		})

@@ -5,7 +5,7 @@ import Immutable from 'immutable'
 
 var initialState = Immutable.fromJS({
 	loggedIn: false,
-	errorMessage: '',
+	errorMessage: false,
 	profiles: {},
 	currentUser : false,
 	profileUserName: false,

@@ -98,6 +98,13 @@ function changeEditAction(){
 	}
 }
 
+function setDescriptionAction(description){
+	return{
+		type: 'SET_DESCRIPTION',
+		description
+	}
+}
+
 function addToListAction(list, item){
 	return {
 		type: 'ADD_LIST_ITEM',
@@ -150,6 +157,7 @@ module.exports = {
 	setPasswordAction,
 	setConfirmPasswordAction,
 	setSuggestionsAction,
+	setDescriptionAction,
 	updateProfileAction,
 	setProfileUserNameAction,
 	changeAvailabiltyAction,

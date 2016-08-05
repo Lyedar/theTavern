@@ -24,6 +24,8 @@ function tavernReducer(previousState, action){
 			return previousState.set('confirmPassword', action.password)
 		case 'SET_SUGGESTION':
 			return previousState.set('suggestions', action.suggestions)
+		case 'SET_DESCRIPTION':
+			return previousState.setIn(['profiles', name, 'description'], action.description)	
 		case 'CHANGE_EDITABLE':
 			return previousState.set('edit', !previousState.get('edit'));
 		case 'UPDATE_PROFILE':

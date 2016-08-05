@@ -11,8 +11,8 @@ import Calendar from './Calendar'
 import Suggestions from './Suggestions'
 import Party from './Party'
 import ToggleEditButton from '../components/ToggleEditButton'
-import {ProfileField, ProfileListField, ProfileCheckboxField} from '../components/profileFields'
-import {setProfileUserNameAction, changeEditAction, addProfileAction, setSuggestionsAction} from '../redux/actions'
+import {ProfileField, ProfileListField, ProfileCheckboxField, ProfileTextAreaField} from '../components/profileFields'
+import {setProfileUserNameAction, changeEditAction, addProfileAction, setSuggestionsAction, setErrorMessageAction, setDescriptionAction} from '../redux/actions'
 import editButtonBehavior from '../components/ToggleEditBehavior'
 import getProfileBehavior from '../components/getProfileBehavior'
 import CommitButton from '../components/CommitButton'
@@ -24,13 +24,14 @@ function mapStateToProps(state){
     profileUserName,
     loggedIn: state.get('loggedIn'),
     currentUser: state.get('currentUser'),
-    state: state,
     profile: state.getIn(['profiles', profileUserName]),
     profiles: state.get('profiles'),
+    
     host: state.getIn(['profiles', profileUserName, 'host']),
     dungeonMaster: state.getIn(['profiles', profileUserName, "dungeonMaster"]),
     player:  state.getIn(['profiles', profileUserName, "player"]),
-    edit : state.get("edit")
+    edit : state.get("edit"),
+    errorMessage: state.get('errorMessage')
   }
 }
 
@@ -39,7 +40,8 @@ function mapDispatchToProps(dispatch){
     setProfileUserName : (userName) => dispatch(setProfileUserNameAction(userName)),
     changeEdit : () => dispatch(changeEditAction()),
     addProfile : (profile) => dispatch(addProfileAction(profile)),
-    setSuggestions : (suggestions) => dispatch(setSuggestionsAction(suggestions))
+    setSuggestions : (suggestions) => dispatch(setSuggestionsAction(suggestions)),
+    setErrorMessage: (message) => dispatch(setErrorMessageAction(message))
   }
 }
 
@@ -49,8 +51,13 @@ class ProfileView extends React.Component {
  whosProfile() {
   requestApi('/api/v1/getprofile/' + this.props.params.slug)()
     .then((profile)=>{
-      this.props.setProfileUserName(profile.userName)
-      this.props.addProfile(profile)
+      if(profile){
+        this.props.setErrorMessage(false)
+        this.props.setProfileUserName(profile.userName)
+        this.props.addProfile(profile)
+      }else{
+        this.props.setErrorMessage('No Profile')
+      }
     })
  }
 
@@ -62,25 +69,24 @@ class ProfileView extends React.Component {
 
   componentWillMount(){
     if(this.currentUser){
+      console.log('meep')
     this.whosProfile()
     }
   }
 
   render() {
-
-    if(this.props.loggedIn){
-      if(!this.props.profileUserName){
-        this.whosProfile()  
-      }
-      
-
-      console.log('FROM PROFILE ', this.props.profiles.getIn([this.props.currentUser, "party"]).toJS().length !== 0)
+    console.log('Am i logged in?', this.props)
+    const profileUserName = this.props.profileUserName
+    const currentUser = this.props.currentUser
+    const partyLength = _.get(this.props.profiles.toJS(), `${currentUser}.party`, []).length
+    if(this.props.loggedIn && !this.props.errorMessage){
       return (
         <div className = 'container-fluid marginTop centerText profileCD'>
-          <h1 className = 'profileName'>{this.props.profileUserName}'s Profile</h1>
-          <h2 className = 'marginTop' >Description of individual goes here</h2>
+          <h1 className = 'profileName'>{this.props.params.slug}'s Profile</h1>
+          <ProfileTextAreaField userName = {this.props.params.slug} />
           <Row>
             <Col md = {6}>
+            {profileUserName !== currentUser ? '' : <ToggleEditButton /> }
               <h4>
                 <ul className = 'leftText'>
                   <li><ProfileField field='name' label="Name"/></li>
@@ -96,6 +102,7 @@ class ProfileView extends React.Component {
                   {this.props.player || this.props.edit ? <li><ProfileCheckboxField label='Player' field='player'/></li> : ''}
                   <li><ProfileListField label='Games'field='games'/></li>
                   <li><ProfileListField label='Friends' field='friends'/></li>
+                  <li><ProfileListField label='Party' field='party'/></li>
                   {this.props.edit ? <li><ProfileListField label='Blocked Users' field='blockedUser' /></li> : ''}
                 </ul>
               </h4>
@@ -103,7 +110,7 @@ class ProfileView extends React.Component {
             </Col>
 
             <Col md = {6}>
-              {this.props.profileUserName === this.props.currentUser && this.props.profiles.getIn([this.props.currentUser, "party"]).toJS().length === 0 ? <Suggestions /> : <Party userName = {this.props.profileUserName} />}
+              {profileUserName === currentUser && partyLength === 0 ? <Suggestions /> : <Party userName = {this.props.params.slug} />}
             </Col>
           </Row>
           <Row>
@@ -113,7 +120,13 @@ class ProfileView extends React.Component {
           </Row>
         </div>
        );
-    }else{
+    }else if(this.props.errorMessage){
+      return(<div>
+        <h1 className = 'profileName'>{this.props.errorMessage}</h1>
+        <h2>Return to <Link to={'/profile/'+this.props.currentUser} onClick={this.whosProfile}>{this.props.currentUser}'s</Link> Profile</h2>
+      </div>)
+    }else{  
+      console.log("To late we're rendering")
       return (<div className="addToFriends">
         <br/>
         <br/>

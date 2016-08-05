@@ -41,20 +41,19 @@ export default class App extends Component {
   
 
    componentWillMount(){
+    console.log('App restart')
     this.getUser()
   }
 
    getUser() {
     requestApi('/api/v1/getuser')()
       .then((user) => {
-        console.log('got user')
         if(user.loggedIn) {
           requestApi('/api/v1/getprofile/' + user.userName)()
             .then((profile)=>{
               this.props.setUser(profile.userName)
-
-              this.props.loginTrue()
               this.props.addProfile(profile)
+              this.props.loginTrue()
             })
         } else {
           this.props.setUser({})
