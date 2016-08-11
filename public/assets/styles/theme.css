@@ -147,3 +147,18 @@ button {
 .twentyTwo {
 	font-size: 25px;
 }
+
+.descriptionTitle{
+	text-decoration: underline;
+	line-height: 30px;
+}
+
+.response{
+	font-style: italic;
+	font-weight: bold;
+	color: #92abbd;
+}
+
+.indent {
+	padding-left: 25px;
+}

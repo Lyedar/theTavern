@@ -31,8 +31,10 @@ export default class ProfileListFieldView extends React.Component {
 		return list.map((item)=>{
 			if(this.props.edit) {
 				return(<div>{item}<span className='red invisableButton' onClick={() => this.props.deleteFromList(this.props.field, item)}>X</span><br/></div>)
-			} else {
-				return(<Link to={'/profile/' + item}>{item}<br/></Link>)
+			} else if (this.props.field === 'games') {
+				return(<li className ='response'>{item}<br/></li>)
+			}else{
+				return(<li className ='response'><Link to={'/profile/' + item}>{item}<br/></Link></li>)
 			}
 		})
 	}
@@ -47,8 +49,8 @@ export default class ProfileListFieldView extends React.Component {
 				</span>)
 		}else{	
 			return(
-				<span>{this.props.label}: 
-				<div className ="green">
+				<span><span className='descriptionTitle'>{this.props.label}</span>: 
+				<div className = 'indent'>
 				{this.listDisplay(this.props.value || [])}
 				</div>
 				</span>)

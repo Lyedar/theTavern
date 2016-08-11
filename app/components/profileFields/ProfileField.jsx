@@ -30,7 +30,7 @@ export default class ProfileFieldsView extends React.Component {
         <input className="black" type = 'text' onChange={(e) => this.props.updateProfile(e.target.value)} value = {this.props.value}/>
         </span>)
     } else {
-      return <span>{this.props.label}: {this.props.value}</span>
+      return <span><span className='descriptionTitle'>{this.props.label}</span>: <span className ='response'>{this.props.value}</span></span>
     }
   }
 

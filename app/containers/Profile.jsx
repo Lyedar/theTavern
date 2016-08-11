@@ -88,21 +88,21 @@ class ProfileView extends React.Component {
             {profileUserName !== currentUser ? '' : <ToggleEditButton /> }
               <h4>
                 <ul className = 'leftText'>
-                  <li><ProfileField field='name' label="Name"/></li>
-                  <li><ProfileField label='User Name' field='userName'/></li>
-                  <li><ProfileField label='Age' field='age'/></li>
-                  <li><ProfileField label='Location' field='location'/></li>
-                  <li><ProfileField label='Phone' field='phone'/></li>
-                  <li><ProfileField label='Email' field='email'/></li>
-                  {this.props.host || this.props.edit ? <li><ProfileCheckboxField label='Host' field='host'/></li> : ''}
-                  <li><ProfileField label='Drink' field='alcohol'/></li>
-                  <li><ProfileField label='Skill' field='skillLevel'/></li>
-                  {this.props.dungeonMaster || this.props.edit ? <li><ProfileCheckboxField label='Dungeon Master' field='dungeonMaster'/></li> : ''}
-                  {this.props.player || this.props.edit ? <li><ProfileCheckboxField label='Player' field='player'/></li> : ''}
-                  <li><ProfileListField label='Games'field='games'/></li>
-                  <li><ProfileListField label='Friends' field='friends'/></li>
-                  <li><ProfileListField label='Party' field='party'/></li>
-                  {this.props.edit ? <li><ProfileListField label='Blocked Users' field='blockedUser' /></li> : ''}
+                  <div><ProfileField field='name' label="Name"/></div>
+                  <div><ProfileField label='User Name' field='userName'/></div>
+                  <div><ProfileField label='Age' field='age'/></div>
+                  <div><ProfileField label='Location' field='location'/></div>
+                  <div><ProfileField label='Phone' field='phone'/></div>
+                  <div><ProfileField label='Email' field='email'/></div>
+                  {this.props.host || this.props.edit ? <div><ProfileCheckboxField label='Host' field='host'/></div> : ''}
+                  <div><ProfileField label='Drink' field='alcohol'/></div>
+                  <div><ProfileField label='Skill' field='skillLevel'/></div>
+                  {this.props.dungeonMaster || this.props.edit ? <div><ProfileCheckboxField label='Dungeon Master' field='dungeonMaster'/></div> : ''}
+                  {this.props.player || this.props.edit ? <div><ProfileCheckboxField label='Player' field='player'/></div> : ''}
+                  <div><ProfileListField label='Games'field='games'/></div>
+                  <div><ProfileListField label='Friends' field='friends'/></div>
+                  <div><ProfileListField label='Party' field='party'/></div>
+                  {this.props.edit ? <div><ProfileListField label='Blocked Users' field='blockedUser' /></div> : ''}
                 </ul>
               </h4>
               {this.props.edit ? <span><CommitButton/><br/><br/></span> : ''}

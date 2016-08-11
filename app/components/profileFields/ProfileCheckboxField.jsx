@@ -29,7 +29,7 @@ export default class ProfileCheckboxFieldsView extends React.Component {
         <span>{this.props.label}: <input type = 'checkbox' onChange={(e) => this.props.updateProfile(e.target.checked)} checked={this.props.value} /></span>
       )
     } else if (this.props.value) {
-      return (<span>Willing to be a {this.props.label}</span>)
+      return (<span className = 'descriptionTitle'>Willing to be a <span className ='response'>{this.props.label}</span></span>)
     } else {
     	return (<span/>)
     }
